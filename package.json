@@ -1,0 +1,38 @@
+{
+  "name": "walletConnectReactNativeCLI",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android --port 8089",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint .",
+    "prebuild": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
+    "build": "cd android && gradlew assembleDebug && cd ../",
+    "clear": "cd android && gradlew clean && cd ../"
+  },
+  "dependencies": {
+    "react": "18.1.0",
+    "react-native": "0.70.0",
+    "@react-native-async-storage/async-storage": "^1.15.17",
+    "@walletconnect/react-native-dapp": "^1.7.1",
+    "react-native-qrcode-svg": "6.0.6",
+    "react-native-randombytes": "^3.6.1",
+    "react-native-svg": "9.6.4"
+  },
+  "devDependencies": {
+    "@babel/core": "7.19.3",
+    "@babel/runtime": "7.19.4",
+    "@react-native-community/eslint-config": "2.0.0",
+    "babel-jest": "26.6.3",
+    "eslint": "7.14.0",
+    "jest": "26.6.3",
+    "metro-react-native-babel-preset": "0.72.1",
+    "react-test-renderer": "18.1.0",
+    "node-libs-react-native": "^1.2.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
