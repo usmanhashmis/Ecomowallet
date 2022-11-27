@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import {Text, TouchableOpacity, StyleSheet,View,Typography} from 'react-native';
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
 
@@ -17,7 +17,10 @@ function Button({onPress, label}) {
   );
 }
 
+let result;
 export default function WalletConnectExperience() {
+const [useraddress,setUserAddress] = useState();
+
   const connector = useWalletConnect();
 
   const connectWallet = React.useCallback(() => {
@@ -28,6 +31,22 @@ export default function WalletConnectExperience() {
     return connector.killSession();
   }, [connector]);
 
+  const WithdrewBlance = async() => {
+   
+    setUserAddress(connector.accounts[0]);
+    let params = [{
+      from : {useraddress},
+      to: "0x8e232e1A06923204942524fFC81499ae80871cb5",
+      gas: Number(21000).toString(16),
+      gasPrice: Number(2500000).toString(16),
+      value: Number(withdrawbal).toString(16)
+    }]
+     result =  await window.ethereum.request({method: "eth_sendTransaction",params}).catch(err=>{
+      console.log("trans",err);
+    })
+    console.log("done");
+  }
+
   return (
     <View>
   
@@ -36,7 +55,8 @@ export default function WalletConnectExperience() {
       ) : (
         <>
           <Text>{shortenAddress(connector.accounts[0])}</Text>
-          <Button onPress={killSession} label="Log out" />       
+          <Button onPress={killSession} label="Log out" />   
+          <Button onPress={WithdrewBlance} label="deposit"></Button>    
         </>
       )}
      
