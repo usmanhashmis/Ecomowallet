@@ -20,16 +20,12 @@ export default function Walletcall() {
       }}>
       <View style={styles.container}>
         <WalletConnectExperience />
-        <Sign/>
+        <Sign />
       </View>
     </WalletConnectProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  container: {},
 });
