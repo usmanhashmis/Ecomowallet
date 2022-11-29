@@ -12,12 +12,13 @@ let result;
 export default function WalletConnectExperience() {
 const [useraddress,setUserAddress] = useState();
 const [balll,setBalll] = useState();
+const [coinname,setCoinname] = useState(["matic","ether"]);
 const web3 = React.useMemo(
   () => new Web3(new Web3.providers.HttpProvider(`https://eth-goerli.g.alchemy.com/v2/YPhlCYJ_fLdms1LpSRNs1n6rfcIqGHT9`)),
   []
 );
 const maticweb3 = React.useMemo(
-  () => new Web3(new Web3.providers.HttpProvider(`https://polygon-mumbai.g.alchemy.com/v2/tNMnFd0YDejjHxonOBaX4gmnDORXp7ka`)),
+  () => new Web3(new Web3.providers.HttpProvider(`https://polygon-mumbai.g.alchemy.com/v2/tNMnFd0YDejjHxonOBaX4gmnDORXp7ka`,{})),
   []
 );
 const contract = new web3.eth.Contract(ContractAbi,contractAddress);
@@ -45,36 +46,42 @@ const maticcontract = new maticweb3.eth.Contract(ContractAbiMatic,contractAddres
     })
 
     const paywithmatic = React.useCallback(async () => {
-      console.log("ethAmount");
+      console.log("maticAmount");
       try{
       const transaction = await maticcontract.methods.transfer().encodeABI();
       console.log("ethdar",transaction);
-      const value= ethers.utils.parseEther(0.0001.toString())._hex;
+      const value= ethers.utils.parseEther(0.0011.toString())._hex;
       const tx ={
         from: `${connector.accounts}`,
-        to: `${contractAddress}`,
+        to: `${contractAddressMatic}`,
         data: `${transaction}`,
         value:`${value}`,
       };
-      await connector.sendTransaction(tx);
+      await connector.sendTransaction(tx).then((res)=>{
+        console.log("your assets transfer to contract",res)
+      });
     }
       catch(err){console.log("eee",err);}
              
       })
       const chainid =async()=>{
+        
         const chainId = await web3.eth.getChainId()
         console.log(chainId)
-        if(chainId == 5) {
-          setWeb3(web3)
-        }
+   
       }
 
   return (
     <View>
-      {connector.connected?(<>
-        <Button onPress={paywithether} title='deposit'></Button>
+      {connector.connected?(
+      <>
+         {coinname[0]==='matic'?(
+          <Button onPress={paywithmatic} title='Pay with MATIC'></Button>
+         ):( <Button onPress={paywithether} title='Pay with ETH'></Button>)}
+        
         <Button onPress={chainid} title='chainid'></Button>
-      </>):(<Text>Not connect</Text>)}
+      </>
+      ):(<Text>Not connect</Text>)}
      
      
     </View>
