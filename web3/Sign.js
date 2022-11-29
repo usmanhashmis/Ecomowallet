@@ -64,7 +64,7 @@ export default function WalletConnectExperience() {
       const value = ethers.utils.parseEther((0.0001).toString())._hex;
       const tx = {
         from: `${connector.accounts}`,
-        to: `${contractAddress}`,
+        to: `${contractAddressMatic}`,
         data: `${transaction}`,
         value: `${value}`,
       };
@@ -85,7 +85,7 @@ export default function WalletConnectExperience() {
     <View>
       {connector.connected ? (
         <>
-          <CustomButton onPress={paywithether} label="deposit"></CustomButton>
+          <Button onPress={paywithether} title="deposit"></Button>
           <Button onPress={chainid} title="chainid"></Button>
         </>
       ) : (
