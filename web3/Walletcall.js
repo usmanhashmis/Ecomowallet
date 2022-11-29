@@ -4,7 +4,7 @@ import WalletConnectProvider from '@walletconnect/react-native-dapp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import WalletConnectExperience from '../WalletConnectExperience';
-
+import Sign from './Sign';
 const SCHEME_FROM_APP_JSON = 'walletconnect-example';
 
 export default function Walletcall() {
@@ -20,6 +20,7 @@ export default function Walletcall() {
       }}>
       <View style={styles.container}>
         <WalletConnectExperience />
+        <Sign/>
       </View>
     </WalletConnectProvider>
   );
@@ -28,7 +29,6 @@ export default function Walletcall() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-   
     alignItems: 'center',
     justifyContent: 'center',
   },

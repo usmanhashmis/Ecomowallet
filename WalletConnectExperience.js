@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {Text, TouchableOpacity, StyleSheet,View,Typography} from 'react-native';
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import { ContractAbi , ContractAbiMatic } from "./web3/abi";
+import {contractAddress , contractAddressMatic} from "./web3/contractAddress";
+import Web3 from 'web3';
+const web3 = new Web3("https://eth-goerli.g.alchemy.com/v2/YPhlCYJ_fLdms1LpSRNs1n6rfcIqGHT9");
 
 const shortenAddress = address => {
   return `${address.slice(0, 6)}...${address.slice(
@@ -20,10 +24,12 @@ function Button({onPress, label}) {
 let result;
 export default function WalletConnectExperience() {
 const [useraddress,setUserAddress] = useState();
+const [balll,setBalll] = useState();
 
   const connector = useWalletConnect();
 
   const connectWallet = React.useCallback(() => {
+    console.log(connector);
     return connector.connect();
   }, [connector]);
 
@@ -31,21 +37,6 @@ const [useraddress,setUserAddress] = useState();
     return connector.killSession();
   }, [connector]);
 
-  const WithdrewBlance = async() => {
-   
-    setUserAddress(connector.accounts[0]);
-    let params = [{
-      from : {useraddress},
-      to: "0x8e232e1A06923204942524fFC81499ae80871cb5",
-      gas: Number(21000).toString(16),
-      gasPrice: Number(2500000).toString(16),
-      value: Number(withdrawbal).toString(16)
-    }]
-     result =  await window.ethereum.request({method: "eth_sendTransaction",params}).catch(err=>{
-      console.log("trans",err);
-    })
-    console.log("done");
-  }
 
   return (
     <View>
@@ -56,7 +47,9 @@ const [useraddress,setUserAddress] = useState();
         <>
           <Text>{shortenAddress(connector.accounts[0])}</Text>
           <Button onPress={killSession} label="Log out" />   
-          <Button onPress={WithdrewBlance} label="deposit"></Button>    
+          {console.log(connector.accounts[0])}
+          <Text>{balll}</Text>   
+          
         </>
       )}
      
