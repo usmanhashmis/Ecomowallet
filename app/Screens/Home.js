@@ -5,7 +5,7 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 import {categoriesList} from '../utils/MockData';
 import Container from '../Components/Container';
@@ -20,12 +20,15 @@ import TouchableRipple from 'react-native-touch-ripple';
 import {useSelector, useDispatch} from 'react-redux';
 import {getproducts} from '../redux/slices/productsapi';
 import {getCryptoPrice} from '../redux/slices/CryptoPriceapi';
+import {setToken} from '../redux/slices/tokenSlice';
 import {getRate, getSymbol} from '../redux/slices/selectedCoinSlice';
+import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
 
-const Home = ({getProducts$, navigation}) => {
+const Home = ({navigation}) => {
   const products = useSelector(state => state.productReducer.products);
   const cryptoprices = useSelector(state => state.crypto.cryptoPrices);
   const selectCoin = useSelector(state => state.coin.selectedCoin);
+  const token = useSelector(state => state.token.token);
 
   const dispatch = useDispatch();
 
@@ -35,13 +38,26 @@ const Home = ({getProducts$, navigation}) => {
   }, [dispatch]);
 
   useEffect(() => {
-    cryptoprices.map(item => {
+    cryptoprices?.map(item => {
       if (selectCoin === item.name) {
         dispatch(getRate(item.rate));
-        dispatch(getSymbol(item.symbol));
       }
     });
   }, [selectCoin]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      dispatch(getCryptoPrice());
+      cryptoprices?.map(item => {
+        if (selectCoin === item.name) {
+          dispatch(getRate(item.rate));
+        }
+      });
+    }, 60000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [cryptoprices]);
 
   const RenderTitle = ({heading, rightLabel}) => {
     return <TitleComp heading={heading} rightLabel={rightLabel} />;
@@ -59,8 +75,25 @@ const Home = ({getProducts$, navigation}) => {
       />
 
       <View style={{paddingVertical: scale(15)}}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
           <RenderTitle heading="Categories" />
+
+          <CountdownCircleTimer
+            isPlaying
+            duration={60}
+            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+            colorsTime={[7, 5, 2, 0]}
+            size={60}
+            onComplete={() => {
+              return {shouldRepeat: true, delay: 1};
+            }}>
+            {({remainingTime}) => <Text>{remainingTime}</Text>}
+          </CountdownCircleTimer>
         </View>
 
         <FlatList
@@ -74,10 +107,7 @@ const Home = ({getProducts$, navigation}) => {
             return (
               <View key={index} style={{alignItems: 'center'}}>
                 <TouchableRipple
-                  onPress={() => {
-                    getProducts$(label);
-                    navigation.navigate('Category', {item});
-                  }}
+                  onPress={() => {}}
                   rippleColor={appColors.primary}
                   // rippleContainerBorderRadius={scale(40)}
                   rippleDuration={800}

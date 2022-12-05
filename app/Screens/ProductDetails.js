@@ -16,9 +16,13 @@ import ReviewComp from '../Components/ReviewComp';
 import BottomButtons from '../Components/BottomButtons';
 import {useDispatch, useSelector} from 'react-redux';
 import {addToCart} from '../redux/slices/CartSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useState} from 'react';
 
 function ProductDetails({navigation, route: {params}}) {
   const cryptoRate = useSelector(state => state.coin.cryptoRate);
+  const token = useSelector(state => state.token.token);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -97,14 +101,14 @@ function ProductDetails({navigation, route: {params}}) {
             <TitleComp heading={'Reviews'} />
             <Pressable
               onPress={() => navigation.navigate('WriteReview', {name})}>
-              <Label text="Write your review" style={styles.wrtitle} />
+              {/* <Label text="Write your review" style={styles.wrtitle} /> */}
             </Pressable>
 
             <ReviewComp />
           </View>
         </View>
       </Container>
-      {_renderBottom()}
+      {token && _renderBottom()}
     </>
   );
 }

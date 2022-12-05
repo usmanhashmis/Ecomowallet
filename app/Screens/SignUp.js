@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import {View, Text, Pressable} from 'react-native';
+import {View, Text, Pressable, Alert} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import Container from '../Components/Container';
 import CustomInput from '../Components/CustomInput';
 import CustomButton from '../Components/CustomButton';
 import Label from '../Components/Label';
 import {appColors, shadow} from '../utils/appColors';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 
 import axios from 'axios';
 
@@ -16,20 +17,34 @@ export default function SignUp({navigation}) {
   const [isloading, setisloading] = useState(false);
 
   const onSignUp = async () => {
+    if (!(userName && email && password)) {
+      Alert.alert('Fields are Empty');
+    }
     if (userName && email && password) {
+      console.log('ali');
       setisloading(true);
       await axios
-        .post('/users/signup', {
+        .post('https://drab-cyan-fossa-kilt.cyclic.app/users/signup', {
           username: userName,
           email: email,
           password: password,
         })
         .then(() => {
           navigation.navigate('Login');
+
+          setisloading(false);
+          showMessage({
+            message: 'Siggned In Succesfully',
+            type: 'success',
+          });
         })
-        .catch(error => console.log(error));
+        .catch(error => {
+          console.log(error);
+          setisloading(false);
+        });
     }
   };
+
   return (
     <Container isScrollable>
       <View
@@ -63,7 +78,7 @@ export default function SignUp({navigation}) {
         </View>
         <View style={{paddingVertical: scale(10)}}>
           <CustomInput
-            onChangeText={userName}
+            onChangeText={SetUserName}
             label="UserName"
             placeholder="alimohsin"
           />

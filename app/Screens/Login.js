@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Pressable} from 'react-native';
+import {View, Text, Pressable, Alert, Button} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import Container from '../Components/Container';
 import CustomInput from '../Components/CustomInput';
@@ -7,27 +7,64 @@ import CustomButton from '../Components/CustomButton';
 import Label from '../Components/Label';
 import {appColors, shadow} from '../utils/appColors';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch, useSelector} from 'react-redux';
+import {setToken} from '../redux/slices/tokenSlice';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 
 function Login({navigation}) {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [isloading, setisloading] = useState(false);
+  const token = useSelector(state => state.token.token);
+  const [showAlert, setShowAlert] = useState(false);
 
-  const onLogin = async () => {
-    if (userName && password) {
-      setisloading(true);
-      await axios
-        .post('/users/login', {
-          username: userName,
-          password: password,
-        })
-        .then(res => {
-          setisloading(false);
-          console.log(res.data);
-          navigation.navigate('Home');
-        })
-        .catch(error => console.log(error));
+  const dispatch = useDispatch();
+
+  const storeData = async value => {
+    try {
+      await AsyncStorage.setItem('token', value);
+    } catch (e) {
+      console.log('Error in token Saving');
     }
+  };
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('token');
+      if (value !== null) {
+        dispatch(setToken(value));
+      }
+    } catch (e) {
+      console.log('error in getting');
+    }
+  };
+  console.log(token);
+  const onLogin = () => {
+    // if (userName && password) {
+    //   setisloading(true);
+    //   await axios
+    //     .post('https://drab-cyan-fossa-kilt.cyclic.app/users/login', {
+    //       username: userName,
+    //       password: password,
+    //     })
+    //     .then(res => {
+    setisloading(false);
+    // console.log(res.data.token);
+    storeData('alimohsin');
+    getData();
+    showMessage({
+      message: 'Logged In Succesfully',
+      type: 'success',
+    });
+    // navigation.navigate('Home');
+    // })
+    // .catch(error => {
+    //   console.log(error);
+    //   Alert.alert('Invalid username or password');
+    //   setisloading(false);
+    // });
+    // }
   };
 
   return (

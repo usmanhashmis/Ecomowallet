@@ -1,5 +1,5 @@
 {
-  "name": "walletConnectReactNativeCLI",
+  "name": "EcomoBooster",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.15.17",
+    "@react-native-community/checkbox": "^0.5.14",
     "@react-navigation/bottom-tabs": "^6.4.1",
     "@react-navigation/native": "^6.0.14",
     "@react-navigation/native-stack": "^6.9.2",
@@ -35,8 +36,12 @@
     "punycode": "^1.2.4",
     "react": "18.1.0",
     "react-native": "0.70.0",
+    "react-native-countdown-circle-timer": "^3.1.0",
     "react-native-crypto": "^2.2.0",
+    "react-native-element-timer": "^2.1.2",
+    "react-native-flash-message": "^0.3.1",
     "react-native-level-fs": "^3.0.0",
+    "react-native-linear-gradient": "^2.6.2",
     "react-native-os": "^1.0.1",
     "react-native-qrcode-svg": "^6.0.6",
     "react-native-randombytes": "^3.6.1",

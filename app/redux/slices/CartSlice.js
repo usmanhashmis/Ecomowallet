@@ -2,7 +2,6 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 
 const initialState = {
   cartItems: [],
-  totalPrice: 0,
 };
 
 const cartSlice = createSlice({
@@ -44,12 +43,7 @@ const cartSlice = createSlice({
   },
 });
 
-export const {
-  addToCart,
-  incrementQuantity,
-  decrementQuantity,
-  removeFromCart,
-  getTotalPrice,
-} = cartSlice.actions;
+export const {addToCart, incrementQuantity, decrementQuantity, removeFromCart} =
+  cartSlice.actions;
 
 export default cartSlice.reducer;
