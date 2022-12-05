@@ -3,6 +3,7 @@ import {StyleSheet, View, Platform, LogBox} from 'react-native';
 import TabNavigation from './app/Components/TabNavigation';
 import {Provider} from 'react-redux';
 import Store from './app/redux/Store';
+import FlashMessage from 'react-native-flash-message';
 
 import Web3 from 'web3';
 import Walletcall from './web3/Walletcall';
@@ -18,6 +19,7 @@ export default function App() {
     <>
       <Provider store={Store}>
         <TabNavigation />
+        <FlashMessage position="top" />
       </Provider>
     </>
   );

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Pressable, Alert} from 'react-native';
+import {View, Text, Pressable, Alert, Button} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import Container from '../Components/Container';
 import CustomInput from '../Components/CustomInput';
@@ -11,12 +11,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setToken} from '../redux/slices/tokenSlice';
 import {BASE_URL} from '../Constants';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 
 function Login({navigation}) {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [isloading, setisloading] = useState(false);
   const token = useSelector(state => state.token.token);
+  const [showAlert, setShowAlert] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -60,6 +62,18 @@ function Login({navigation}) {
         });
     }
   };
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('token');
+      if (value !== null) {
+        dispatch(setToken(value));
+      }
+    } catch (e) {
+      console.log('error in getting');
+    }
+  };
+  
 
   return (
     <Container isScrollable>

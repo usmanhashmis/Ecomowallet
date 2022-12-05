@@ -111,7 +111,7 @@ function ProductDetails({navigation, route: {params}}) {
             <TitleComp heading={'Reviews'} />
             <Pressable
               onPress={() => navigation.navigate('WriteReview', {name})}>
-              <Label text="Write your review" style={styles.wrtitle} />
+              {/* <Label text="Write your review" style={styles.wrtitle} /> */}
             </Pressable>
 
             <ReviewComp />

@@ -57,11 +57,16 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
       <View
         style={{
           flex: 1,
-
           paddingHorizontal: scale(20),
           borderRadius: scale(20),
           alignItems: 'center',
           backgroundColor: appColors.white,
+          shadowColor: '#000',
+          shadowOpacity: 0.06,
+          shadowOffset: {
+            width: 10,
+            height: 10,
+          },
           flexDirection: 'row',
           height: scale(40),
         }}>

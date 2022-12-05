@@ -1,16 +1,17 @@
 import React from 'react';
 import {appColors} from './appColors';
 import {Image} from 'react-native';
+import {SvgUri} from 'react-native-svg';
 
 export const reviews = [
   {
-    name: 'Amusoftech',
+    name: 'Ali Mohsin',
     detail: 'Wonderful jean, perfect gift for my girl for our anniversary!',
     count: 4,
     image: require('../static/images/rate/1.png'),
   },
   {
-    name: 'Aman Deep',
+    name: 'Usman Hashmi',
     detail: 'Nike Dri-FIT is a polyester fabric designed to help you ',
     count: 3,
     image: require('../static/images/rate/1.png'),

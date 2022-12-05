@@ -44,7 +44,7 @@ export default function CheckOutItem({
         }}
         source={{uri: image}}
       />
-
+      //branch
       <View
         style={{
           marginLeft: scale(10),

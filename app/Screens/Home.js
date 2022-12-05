@@ -59,6 +59,27 @@ const Home = ({navigation}) => {
   //     clearInterval(intervalId);
   //   };
   // }, [cryptoprices]);
+  useEffect(() => {
+    cryptoprices?.map(item => {
+      if (selectCoin === item.name) {
+        dispatch(getRate(item.rate));
+      }
+    });
+  }, [selectCoin]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      dispatch(getCryptoPrice());
+      cryptoprices?.map(item => {
+        if (selectCoin === item.name) {
+          dispatch(getRate(item.rate));
+        }
+      });
+    }, 60000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [cryptoprices]);
 
   const RenderTitle = ({heading, rightLabel}) => {
     return <TitleComp heading={heading} rightLabel={rightLabel} />;
@@ -83,7 +104,6 @@ const Home = ({navigation}) => {
             alignItems: 'center',
           }}>
           <RenderTitle heading="Categories" />
-          <Text>token {token}</Text>
           <CountdownCircleTimer
             isPlaying
             duration={60}
