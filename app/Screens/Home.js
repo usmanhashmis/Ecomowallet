@@ -4,9 +4,10 @@ import {
   View,
   FlatList,
   ActivityIndicator,
-  Alert,
+  Alert,Image,
   TouchableWithoutFeedback,
   Dimensions,
+  ImageBackground,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {categoriesList} from '../utils/MockData';
@@ -26,7 +27,7 @@ import {setToken} from '../redux/slices/tokenSlice';
 import {getRate} from '../redux/slices/selectedCoinSlice';
 import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
 import axios from 'axios';
-
+import {Card, Button , Title ,Paragraph } from 'react-native-paper';
 // const {width,height} = Dimensions.get('window');
 
 const Home = ({navigation}) => {
@@ -34,15 +35,12 @@ const Home = ({navigation}) => {
   const cryptoprices = useSelector(state => state.crypto.cryptoPrices);
   const selectCoin = useSelector(state => state.coin.selectedCoin);
   const [hide, setHide] = useState(true);
-  // const [disData, setDisData] = useState({
-  //   amount,
-  //   coin,
-  //   promocode,
-  // });
+   const [disData, setDisData] = useState([]);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
+    
     dispatch(getproducts());
     dispatch(getCryptoPrice());
     getData();
@@ -50,6 +48,7 @@ const Home = ({navigation}) => {
   }, [dispatch]);
 
   useEffect(() => {
+    
     cryptoprices?.map(item => {
       if (selectCoin === item.name) {
         dispatch(getRate(item.rate));
@@ -58,6 +57,7 @@ const Home = ({navigation}) => {
   }, [selectCoin]);
 
   useEffect(() => {
+    
     const intervalId = setInterval(() => {
       dispatch(getCryptoPrice());
       cryptoprices?.map(item => {
@@ -94,7 +94,8 @@ const Home = ({navigation}) => {
     axios
       .get('/giftoff/getdiscount')
       .then(res => {
-        // setDisData({...disData, amount: res.data.amount});
+        setDisData(res.data);
+        console.log("new",disData);
       })
       .catch(err => console.log(err));
   };
@@ -108,20 +109,39 @@ const Home = ({navigation}) => {
             navigation={navigation}
             hide={hide}
           />
-          <View
+       
+       <Card style={Styles.container}>
+       {/* <Card.Actions> 
+          <Button>{"Close"}</Button>
+        </Card.Actions> */}
+          {disData?.map((item,index)=>(
+          <View key={index}>
+            {item.coin=='Ethereum'? ( <ImageBackground source={{uri: 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=023'}}  style={{width: 55, height: 55 }}>
+          </ImageBackground>):(  <ImageBackground source={{uri: 'https://cryptologos.cc/logos/polygon-matic-logo.png?v=023'}}  style={{width: 55, height: 55 }}>
+          </ImageBackground>)}
+               <View  style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center'}}>
+               <Text style={Styles.textshadow}  selectable >PROMO: {item.promocode}</Text>
+               <Text style={{fontWeight:'bold'}}>{item.amount} {item.coin}</Text>
+             </View>
+          </View>   
+          ))}       
+      </Card> 
+ 
+     
+          {/* <View
             style={{
               marginTop: '3%',
               marginHorizontal: '3%',
-              height: '13%',
+              height: '10%',
               borderRadius: 10,
-              width: '94%',
+              width: '92%',
               backgroundColor: 'white',
             }}>
             <Text style={{padding: 15, textAlignments: 'center'}}>
               {`To get Exciting discount \n ${selectCoin} enter promo code`}
             </Text>
             <Text>BEBE</Text>
-          </View>
+          </View> */}
           <View style={{paddingVertical: scale(15)}}>
             <View
               style={{
@@ -214,3 +234,23 @@ const Home = ({navigation}) => {
 export default Home;
 
 const styles = StyleSheet.create({});
+
+const Styles = StyleSheet.create({
+  container :{
+      alignContent:'center',
+      margin:4,
+      marginLeft:20,
+      marginRight:20
+  },
+  textshadow:{
+    fontSize:30,
+    color:'#0f0f0f',
+   
+    fontFamily:'sans-serif',
+    paddingLeft:30,
+    paddingRight:30,
+    textShadowColor:'#020202',
+    textShadowOffset:{width: -1, height: -1},
+    textShadowRadius:3,
+  },
+})

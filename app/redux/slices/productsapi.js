@@ -3,7 +3,7 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 export const getproducts = createAsyncThunk(
   'productSlice/getproducts',
   async () => {
-    return await fetch('http://192.168.0.114:420/categories/getproduct')
+    return await fetch('http://192.168.0.110:420/categories/getproduct')
       .then(res => res.json())
       .catch(err => console.log(err.message));
   },
