@@ -171,9 +171,6 @@ const Home = ({navigation}) => {
           />
        
        <Card style={Styles.container}>
-       {/* <Card.Actions> 
-          <Button>{"Close"}</Button>
-        </Card.Actions> */}
           {disData?.map((item,index)=>(
           <View key={index}>
             {item.coin=='Ethereum'? ( <ImageBackground source={{uri: 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=023'}}  style={{width: 55, height: 55 }}>
