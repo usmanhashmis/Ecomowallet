@@ -1,8 +1,6 @@
-import {View, Text} from 'react-native';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-
 import Icon from 'react-native-vector-icons/Ionicons';
 import {appColors} from '../utils/appColors';
 import Login from '../Screens/Login';
@@ -54,6 +52,7 @@ const TabNavigation = () => {
             ),
           }}
         />
+
         <Tab.Screen
           name="Cart"
           component={Cart}

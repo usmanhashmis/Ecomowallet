@@ -1,28 +1,85 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  View,
-  Button,
-  Alert,
-} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {Text, View, Button} from 'react-native';
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
 import {ContractAbi, ContractAbiMatic} from './abi';
 import {contractAddress, contractAddressMatic} from './contractAddress';
 import {ethers} from 'ethers';
-
+import axios from 'axios';
 import Web3 from 'web3';
 import CustomButton from '../app/Components/CustomButton';
-import {useSelector} from 'react-redux';
+import {ALERT_TYPE, Dialog} from 'react-native-alert-notification';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {emptyCart} from '../app/redux/slices/CartSlice';
+import {useSelector, useDispatch} from 'react-redux';
 
-let result;
-export default function WalletConnectExperience() {
+export default function Sign({totalPrice}) {
   const [confirm, setConfirm] = useState(false);
+  const [iid, setId] = useState();
+  const [userName, setUserName] = useState();
   const selectCoin = useSelector(state => state.coin.selectedCoin);
-  const [useraddress, setUserAddress] = useState();
-  const [balll, setBalll] = useState();
-  const tPrice = useSelector(state => state.totalPrice.totalPrice);
+  const cartItems = useSelector(state => state.cart.cartItems);
+  const dispatch = useDispatch();
+
+  const [data, setData] = useState({
+    id: 1,
+    totalPrice: totalPrice,
+    category: [],
+  });
+
+  useEffect(() => {
+    getData();
+    let items = cartItems.map(item => {
+      return {
+        price: item.price,
+        productid: item.product_id,
+        quantity: item.quantity,
+        purchase_price: item.purchase_price,
+      };
+    });
+    setData({...data, category: items});
+  }, []);
+
+  const orderPressed = () => {
+    axios
+      .post('/orderr/order', {
+        productdetail: data.category,
+        totalBill: data.totalPrice,
+        email: userName,
+        coin: selectCoin,
+      })
+      .then(function (response) {
+        console.log(response.data);
+        if (response.data.id) {
+          setId(response.data.id);
+          dispatch(emptyCart());
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('username');
+      if (value !== null) {
+        setUserName(value);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const completed = id => {
+    axios
+      .put(`/orderr/status/${id}`)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   const web3 = React.useMemo(
     () =>
@@ -55,7 +112,7 @@ export default function WalletConnectExperience() {
     try {
       const transaction = await contract.methods.transfer().encodeABI();
       console.log('ethdar', transaction);
-      const value = ethers.utils.parseEther(tPrice.toString())._hex;
+      const value = ethers.utils.parseEther(totalPrice.toString())._hex;
       console.log(value);
       const tx = {
         from: `${connector.accounts}`,
@@ -65,12 +122,23 @@ export default function WalletConnectExperience() {
       };
       await connector.sendTransaction(tx).then(() => {
         console.log('your assets transfer to contract');
-        Alert.alert('Balance trasfered');
+        Dialog.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: 'Success',
+          textBody: 'Balance Transfered Successfully',
+          button: 'Close',
+        });
+        orderPressed();
         setConfirm(true);
       });
     } catch (err) {
       console.log('eee', err);
-      Alert.alert('insufficient funds');
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Canceled',
+        textBody: 'Insufficient Funds in Account',
+        button: 'Close',
+      });
     }
   });
 
@@ -88,12 +156,23 @@ export default function WalletConnectExperience() {
       };
       await connector.sendTransaction(tx).then(() => {
         console.log('your assets transfer to contract');
-        Alert.alert('insufficient funds');
+        Dialog.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: 'Success',
+          textBody: 'Balance Transfered Successfully',
+          button: 'Close',
+        });
+        orderPressed();
         setConfirm(true);
       });
     } catch (err) {
       console.log('eee', err);
-      Alert.alert('');
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Canceled',
+        textBody: 'Insufficient Funds in Account',
+        button: 'Close',
+      });
     }
   });
   const chainid = async () => {
@@ -120,7 +199,13 @@ export default function WalletConnectExperience() {
       };
       await connector.sendTransaction(tx).then(() => {
         console.log('your assets withdrew onwer');
-        Alert.alert('Payment Completed');
+        completed(id);
+        Dialog.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: 'Success',
+          textBody: 'Payment Completed Successfully',
+          button: 'Close',
+        });
         setConfirm(false);
       });
     } catch (err) {
@@ -143,8 +228,14 @@ export default function WalletConnectExperience() {
         value: `${value}`,
       };
       await connector.sendTransaction(tx).then(() => {
+        completed(iid);
         console.log('your assets withdrew onwer');
-        Alert.alert('Payment Completed');
+        Dialog.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: 'Success',
+          textBody: 'Payment Completed Successfully',
+          button: 'Close',
+        });
         setConfirm(false);
       });
     } catch (err) {
@@ -178,12 +269,10 @@ export default function WalletConnectExperience() {
                   label="Pay Ether"></CustomButton>
               )}
 
-              {confirm ? (
-                <Button
+              {confirm && (
+                <CustomButton
                   onPress={confirmassetsether}
-                  title="Release Ether"></Button>
-              ) : (
-                <Text></Text>
+                  label="Release Ether"></CustomButton>
               )}
             </>
           )}

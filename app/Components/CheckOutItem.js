@@ -17,6 +17,7 @@ export default function CheckOutItem({
   price,
   quantity,
   id,
+  stoke,
 }) {
   const cryptoRate = useSelector(state => state.coin.cryptoRate);
   const dispatch = useDispatch();
@@ -44,7 +45,7 @@ export default function CheckOutItem({
         }}
         source={{uri: image}}
       />
-      //branch
+
       <View
         style={{
           marginLeft: scale(10),
@@ -58,14 +59,22 @@ export default function CheckOutItem({
 
             alignItems: 'center',
           }}>
-          <Label
-            text={(price / cryptoRate).toFixed(3)}
+          <View
             style={{
-              fontSize: scale(18),
-              fontWeight: '500',
-              color: appColors.primary,
-            }}
-          />
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Label
+              text={(price / cryptoRate).toFixed(5)}
+              style={{
+                fontSize: scale(18),
+                fontWeight: '500',
+                color: appColors.primary,
+              }}
+            />
+            {/* <Text>{stoke}</Text> */}
+          </View>
           {showQuantity && (
             <Label
               text={`Qty ${quantity}`}

@@ -7,28 +7,49 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSelector, useDispatch} from 'react-redux';
 import {changeCoin} from '../redux/slices/selectedCoinSlice';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {setToken} from '../redux/slices/tokenSlice';
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from 'react-native-alert-notification';
 
-export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
+export default function SearchBox({
+  autoFocus,
+  onFoucs,
+  rightIcon,
+  navigation,
+  hide,
+}) {
   const dispatch = useDispatch();
   const selectCoin = useSelector(state => state.coin.selectedCoin);
   const [coinsArray, setCoinsArray] = useState([]);
   const [display, setDisplay] = useState('none');
+  const [logDisplay, setLogDisplay] = useState('none');
   const [displayEther, setDisplayEther] = useState('none');
   const [displayMatic, setDisplayMatic] = useState('none');
+  const token = useSelector(state => state.token.token);
 
   useEffect(() => {
     axios
-      .get('https://drab-cyan-fossa-kilt.cyclic.app/prices/getprices')
+      .get('/prices/getprices')
       .then(res => setCoinsArray(res.data[0].coin_name));
   }, []);
 
   const pressCrypto = () => {
     if (display === 'none') setDisplay('flex');
     else setDisplay('none');
+
     coinsArray.map(item => {
       if (item === 'Ethereum') setDisplayEther('flex');
       if (item === 'Polygon') setDisplayMatic('flex');
     });
+  };
+  const pressLog = () => {
+    if (logDisplay === 'none') setLogDisplay('flex');
+    else setLogDisplay('none');
   };
 
   const etherPress = () => {
@@ -46,6 +67,21 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
     setDisplay('none');
   };
 
+  const logOut = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      dispatch(setToken(''));
+      Toast.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: 'Success',
+        textBody: 'LogOut Successfully',
+      });
+      navigation.navigate('Home');
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <View
       style={{
@@ -57,6 +93,7 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
           flex: 1,
           paddingHorizontal: scale(20),
           borderRadius: scale(20),
+          // borderWidth: 1,
           alignItems: 'center',
           backgroundColor: appColors.white,
           shadowColor: '#000',
@@ -67,6 +104,7 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
           },
           flexDirection: 'row',
           height: scale(40),
+          marginRight: 10,
         }}>
         <Feather name="search" size={scale(20)} color={appColors.black} />
         <TextInput
@@ -77,20 +115,42 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
         />
       </View>
 
-      <Pressable
-        onPress={() => navigation.navigate('Cart')}
-        style={{
-          borderRadius: scale(20),
-          width: scale(40),
-          height: scale(40),
-          backgroundColor: appColors.primary,
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginLeft: scale(10),
-          marginRight: scale(10),
-        }}>
-        <Ionicons name={'person'} size={scale(18)} color={appColors.white} />
-      </Pressable>
+      {token && (
+        <View
+          style={{
+            flexDirection: 'column',
+          }}>
+          <Pressable
+            onPress={pressLog}
+            style={{
+              borderRadius: scale(20),
+              width: scale(40),
+              height: scale(40),
+              backgroundColor: appColors.primary,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: scale(10),
+            }}>
+            <Ionicons
+              name={'person'}
+              size={scale(18)}
+              color={appColors.white}
+            />
+          </Pressable>
+          <View
+            style={{
+              flexDirection: 'column',
+              display: logDisplay,
+              marginTop: scale(40),
+              // marginLeft: scale(5),
+              position: 'absolute',
+              zIndex: 1,
+            }}>
+            <Button onPress={logOut} title="LogOut" color={appColors.primary} />
+          </View>
+        </View>
+      )}
+
       <View
         style={{
           flexDirection: 'column',
@@ -128,7 +188,7 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
             }}>
             <Button
               onPress={etherPress}
-              title="Ethr"
+              title="Ether"
               color={appColors.primary}
             />
           </View>

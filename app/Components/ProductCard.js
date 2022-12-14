@@ -7,7 +7,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {getCryptoPrice} from '../redux/slices/CryptoPriceapi';
 
 export default function ProductCard({navigation, item}) {
-  const {product_name, description, price, product_img} = item;
+  const {product_name, description, price, product_img, product_stock} = item;
 
   const cryptoRate = useSelector(state => state.coin.cryptoRate);
   const coinSymbol = useSelector(state => state.coin.coinSymbol);
@@ -50,9 +50,9 @@ export default function ProductCard({navigation, item}) {
             />
           </View>
 
-          <View style={{paddingVertical: scale(5)}}>
+          <View style={{flexDirection: 'row', paddingVertical: scale(5)}}>
             <Label
-              text={(price / cryptoRate).toFixed(9)}
+              text={(price / cryptoRate).toFixed(5)}
               style={{
                 fontSize: scale(18),
                 color: appColors.primary,

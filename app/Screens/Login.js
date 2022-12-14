@@ -10,7 +10,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setToken} from '../redux/slices/tokenSlice';
-import {showMessage, hideMessage} from 'react-native-flash-message';
+import {ALERT_TYPE, Dialog, Toast} from 'react-native-alert-notification';
 
 function Login({navigation}) {
   const [userName, setUserName] = useState('');
@@ -23,7 +23,8 @@ function Login({navigation}) {
 
   const storeData = async value => {
     try {
-      await AsyncStorage.setItem('token', value);
+      await AsyncStorage.setItem('token', value.token);
+      await AsyncStorage.setItem('username', value.username);
     } catch (e) {
       console.log('Error in token Saving');
     }
@@ -39,40 +40,62 @@ function Login({navigation}) {
       console.log('error in getting');
     }
   };
-  console.log(token);
+
   const onLogin = () => {
-    // if (userName && password) {
-    //   setisloading(true);
-    //   await axios
-    //     .post('https://drab-cyan-fossa-kilt.cyclic.app/users/login', {
-    //       username: userName,
-    //       password: password,
-    //     })
-    //     .then(res => {
-    setisloading(false);
-    // console.log(res.data.token);
-    storeData('alimohsin');
-    getData();
-    showMessage({
-      message: 'Logged In Succesfully',
-      type: 'success',
-    });
-    // navigation.navigate('Home');
-    // })
-    // .catch(error => {
-    //   console.log(error);
-    //   Alert.alert('Invalid username or password');
-    //   setisloading(false);
-    // });
-    // }
+    if (!(userName && password)) {
+      Toast.show({
+        type: ALERT_TYPE.WARNING,
+        title: 'Fields are empty',
+        textBody: 'Fill all the fields to continue',
+      });
+    }
+    if (userName && password) {
+      setisloading(true);
+      axios
+        .post('/users/login', {
+          username: userName,
+          password: password,
+        })
+        .then(res => {
+          if (res.data.token) {
+            setisloading(false);
+            console.log(res.data);
+            storeData(res.data);
+            getData();
+            Toast.show({
+              type: ALERT_TYPE.SUCCESS,
+              title: 'Success',
+              textBody: 'Logged In Successfully',
+            });
+
+            navigation.navigate('Home');
+          } else {
+            setisloading(false);
+            Toast.show({
+              type: ALERT_TYPE.DANGER,
+              title: 'Success',
+              textBody: 'Invaid Email or Password',
+            });
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          Toast.show({
+            type: ALERT_TYPE.DANGER,
+            title: 'Success',
+            textBody: 'Invaid Email or Password',
+          });
+          setisloading(false);
+        });
+    }
   };
 
   return (
     <Container isScrollable>
       <View
         style={{
-          marginTop: scale(65),
-          marginHorizontal: scale(20),
+          marginTop: '30%',
+          marginHorizontal: '5%',
           backgroundColor: appColors.white,
           ...shadow,
           padding: scale(15),
@@ -99,19 +122,14 @@ function Login({navigation}) {
             }}
           />
         </View>
-        <View style={{paddingVertical: scale(10)}}>
-          <CustomInput
-            onChangeText={setUserName}
-            label="UserName"
-            placeholder="alimohsin"
-          />
+        <View>
+          <CustomInput onChangeText={setUserName} placeholder="USERNAME" />
         </View>
-        <View style={{paddingVertical: scale(10)}}>
+        <View>
           <CustomInput
             onChangeText={setPassword}
             secureTextEntry
-            label="Password"
-            placeholder="Password"
+            placeholder="PASSWORD"
           />
         </View>
         <Pressable
@@ -121,13 +139,13 @@ function Login({navigation}) {
             justifyContent: 'flex-end',
             paddingVertical: scale(10),
           }}>
-          <Label
+          {/* <Label
             text="Forgot password"
             style={{
               fontSize: scale(14),
               fontWeight: '500',
             }}
-          />
+          /> */}
         </Pressable>
         <CustomButton
           isLoading={isloading}

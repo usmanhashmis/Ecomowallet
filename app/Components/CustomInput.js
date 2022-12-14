@@ -1,86 +1,79 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
-import {appColors, shadow} from '../utils/appColors';
-import {scale} from 'react-native-size-matters';
-import Label from './Label';
-export default function CustomInput({
-  placeholder,
-  value,
-  onChangeText,
-  secureTextEntry,
-  keyboardType,
-  InputStyle,
-  IconRight,
-  IconLeft,
+import React from 'react';
+import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {appColors} from '../utils/appColors';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+const CustomInput = ({
   label,
-  containerStyle,
-}) {
-  const [focused, setFocused] = useState(false);
-  const onFocus = () => {
-    setFocused(!focused);
-  };
+  iconName,
+  error,
+  password,
+
+  onFocus = () => {},
+  ...props
+}) => {
+  const [hidePassword, setHidePassword] = React.useState(password);
+  const [isFocused, setIsFocused] = React.useState(false);
   return (
-    <View
-      style={[
-        styles.container,
-        containerStyle,
-        focused ? styles.activeBorder : styles.blurBorder,
-      ]}>
-      {label && (
-        <View style={{paddingVertical: scale(3)}}>
-          <Label
-            style={{color: appColors.black, fontWeight: '600'}}
-            text={label}
-          />
-        </View>
-      )}
+    <View>
+      <Text style={style.label}>{label}</Text>
       <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        {IconLeft && <IconLeft />}
-        <TextInput
-          placeholder={placeholder}
-          value={value}
-          onChangeText={onChangeText}
-          secureTextEntry={secureTextEntry}
-          keyboardType={keyboardType}
-          style={[styles.input, InputStyle]}
-          onBlur={onFocus}
-          onFocus={onFocus}
+        style={[
+          style.inputContainer,
+          {
+            borderColor: error
+              ? appColors.red
+              : isFocused
+              ? appColors.darkBlue
+              : appColors.light,
+            alignItems: 'center',
+          },
+        ]}>
+        <Icon
+          name={iconName}
+          style={{color: appColors.darkBlue, fontSize: 22, marginRight: 10}}
         />
-        {IconRight && <IconRight />}
+        <TextInput
+          autoCorrect={false}
+          onFocus={() => {
+            onFocus();
+            setIsFocused(true);
+          }}
+          onBlur={() => setIsFocused(false)}
+          secureTextEntry={hidePassword}
+          style={{color: appColors.darkBlue, flex: 1}}
+          {...props}
+        />
+        {password && (
+          <Icon
+            onPress={() => setHidePassword(!hidePassword)}
+            name={hidePassword ? 'eye-outline' : 'eye-off-outline'}
+            style={{color: appColors.darkBlue, fontSize: 22}}
+          />
+        )}
       </View>
+      {error && (
+        <Text style={{marginTop: 7, color: appColors.red, fontSize: 12}}>
+          {error}
+        </Text>
+      )}
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    // flexDirection: "row",
-    //paddingHorizontal: scale(10),
-    //margin: scale(5),
-    //height: scale(45),
-    // alignItems: "center",
-    // backgroundColor: appColors.white,
-    borderBottomWidth: scale(0.4),
-    // borderRadius:scale(25),
-    // ...shadow
+const style = StyleSheet.create({
+  label: {
+    marginVertical: 5,
+    fontSize: 14,
+    color: appColors.grey,
   },
-  input: {
-    //backgroundColor:'red',
-    // height:scale(90),
-    paddingVertical: scale(10),
-    // flex: 1,
-    fontSize: scale(14),
-  },
-  blurBorder: {
-    borderColor: appColors.darkGray,
-  },
-  activeBorder: {
-    borderColor: appColors.primary,
-    borderBottomWidth: scale(1),
+  inputContainer: {
+    height: 55,
+    backgroundColor: appColors.light,
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    borderWidth: 1.5,
+    borderRadius: 10,
   },
 });
+
+export default CustomInput;
