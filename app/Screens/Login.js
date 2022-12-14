@@ -10,8 +10,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setToken} from '../redux/slices/tokenSlice';
-import {BASE_URL} from '../Constants';
-import {showMessage, hideMessage} from 'react-native-flash-message';
+import {ALERT_TYPE, Dialog, Toast} from 'react-native-alert-notification';
 
 function Login({navigation}) {
   const [userName, setUserName] = useState('');
@@ -34,7 +33,13 @@ function Login({navigation}) {
  
   console.log(token);
   const onLogin = async () => {
-    console.log("🚀 ~ file: Login.js:45 ~ onLogin ~ password:",userName, password)
+    if (!(userName && password)) {
+      Toast.show({
+        type: ALERT_TYPE.WARNING,
+        title: 'Fields are empty',
+        textBody: 'Fill all the fields to continue',
+      });
+    }
     if (userName && password) {
       console.log("🚀 ~ file: Login.js:45 password:",userName, password)
       setisloading(true);
@@ -79,8 +84,8 @@ function Login({navigation}) {
     <Container isScrollable>
       <View
         style={{
-          marginTop: scale(65),
-          marginHorizontal: scale(20),
+          marginTop: '30%',
+          marginHorizontal: '5%',
           backgroundColor: appColors.white,
           ...shadow,
           padding: scale(15),
@@ -107,19 +112,14 @@ function Login({navigation}) {
             }}
           />
         </View>
-        <View style={{paddingVertical: scale(10)}}>
-          <CustomInput
-            onChangeText={setUserName}
-            label="UserName"
-            placeholder="alimohsin"
-          />
+        <View>
+          <CustomInput onChangeText={setUserName} placeholder="USERNAME" />
         </View>
-        <View style={{paddingVertical: scale(10)}}>
+        <View>
           <CustomInput
             onChangeText={setPassword}
             secureTextEntry
-            label="Password"
-            placeholder="Password"
+            placeholder="PASSWORD"
           />
         </View>
         <Pressable
@@ -129,13 +129,13 @@ function Login({navigation}) {
             justifyContent: 'flex-end',
             paddingVertical: scale(10),
           }}>
-          <Label
+          {/* <Label
             text="Forgot password"
             style={{
               fontSize: scale(14),
               fontWeight: '500',
             }}
-          />
+          /> */}
         </Pressable>
         <CustomButton
           isLoading={isloading}

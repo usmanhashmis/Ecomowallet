@@ -1,6 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
 
-const initialState = {selectedCoin: 'USDT', cryptoRate: 1, coinSymbol: '$'};
+const initialState = {selectedCoin: 'Tether', cryptoRate: 1, coinSymbol: '$'};
 
 const selectedCoinSlice = createSlice({
   name: 'selectedCoinSlice',

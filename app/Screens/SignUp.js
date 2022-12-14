@@ -6,7 +6,7 @@ import CustomInput from '../Components/CustomInput';
 import CustomButton from '../Components/CustomButton';
 import Label from '../Components/Label';
 import {appColors, shadow} from '../utils/appColors';
-import {showMessage, hideMessage} from 'react-native-flash-message';
+import {ALERT_TYPE, Dialog, Toast} from 'react-native-alert-notification';
 
 import axios from 'axios';
 import {BASE_URL} from '../Constants';
@@ -19,7 +19,11 @@ export default function SignUp({navigation}) {
 
   const onSignUp = async () => {
     if (!(userName && email && password)) {
-      Alert.alert('Fields are Empty');
+      Toast.show({
+        type: ALERT_TYPE.WARNING,
+        title: 'Fields are empty',
+        textBody: 'Fill all the fields to continue',
+      });
     }
     if (userName && email && password) {
       console.log("🚀 ~ file: SignUp.js:24 ~ onSignUp ~ userName:", userName,email,password)
@@ -54,8 +58,8 @@ export default function SignUp({navigation}) {
     <Container isScrollable>
       <View
         style={{
-          marginTop: scale(70),
-          marginHorizontal: scale(20),
+          marginTop: '30%',
+          marginHorizontal: '5%',
           backgroundColor: appColors.white,
           ...shadow,
           padding: scale(15),
@@ -72,7 +76,7 @@ export default function SignUp({navigation}) {
             style={{fontSize: scale(30), fontWeight: '700'}}
           />
         </View>
-        <View style={{paddingVertical: scale(15)}}>
+        <View style={{paddingTop: scale(15)}}>
           <Label
             text="Sign in to Continue"
             style={{
@@ -81,27 +85,25 @@ export default function SignUp({navigation}) {
             }}
           />
         </View>
-        <View style={{paddingVertical: scale(10)}}>
-          <CustomInput
-            onChangeText={SetUserName}
-            label="UserName"
-            placeholder="alimohsin"
-          />
+        <View>
+          <CustomInput onChangeText={SetUserName} placeholder="USERNAME" />
+          <View style={{paddingLeft: '5%'}}>
+            <Text>{`\u25CF  `}UserName must be Unique</Text>
+            <Text>{`\u25CF  `}Between 8 to 10 Characters</Text>
+          </View>
         </View>
-        <View style={{paddingVertical: scale(10)}}>
+        <View>
           <CustomInput
             onChangeText={setEmail}
             keyboardType="email-address"
-            label="Email"
-            placeholder="example@gmail.com"
+            placeholder="EMAIL ADDRESS"
           />
         </View>
-        <View style={{paddingVertical: scale(10)}}>
+        <View style={{marginBottom: 20}}>
           <CustomInput
             onChangeText={setPassword}
             secureTextEntry
-            label="Password"
-            placeholder="Password"
+            placeholder="PASSWORD"
           />
         </View>
         <CustomButton

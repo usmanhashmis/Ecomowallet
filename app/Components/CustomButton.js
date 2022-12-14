@@ -32,6 +32,7 @@ export default function CustomButton({
             styles.label,
             unFilled ? styles.unFilledLabel : {},
             labelStyle,
+            style,
           ]}>
           {`${label}`.toUpperCase()}
         </Text>
@@ -45,7 +46,7 @@ export default function CustomButton({
 const styles = StyleSheet.create({
   container: {
     height: scale(50),
-    backgroundColor: appColors.primary,
+    backgroundColor: appColors.black,
     borderRadius: scale(30),
     justifyContent: 'space-evenly',
     flexDirection: 'row',
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(50),
   },
   label: {
-    fontSize: scale(16),
+    fontSize: scale(15),
     fontWeight: '300',
     color: appColors.white,
     letterSpacing: scale(2),

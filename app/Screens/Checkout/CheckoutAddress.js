@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, TextInput} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
 import Container from '../../Components/Container';
@@ -72,12 +72,12 @@ export default function CheckoutAddress({navigation, route}) {
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <CustomInput
+            <TextInput
               containerStyle={{backgroundColor: 'transparent'}}
               value="Punjab"
               label="State"
             />
-            <CustomInput
+            <TextInput
               containerStyle={{backgroundColor: 'transparent'}}
               value="Pakistan"
               label="Country"

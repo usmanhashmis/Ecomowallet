@@ -75,7 +75,7 @@ export default function WalletConnectExperience() {
               {shortenAddress(connector.accounts[0])}
             </Text>
           </View>
-          <CustomButton onPress={killSession} label="Log out" />
+          <CustomButton onPress={killSession} label="Kill Session" />
           {console.log(connector.accounts[0])}
           <Text>{balll}</Text>
         </>

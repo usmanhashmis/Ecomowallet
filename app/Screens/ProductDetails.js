@@ -16,12 +16,15 @@ import ReviewComp from '../Components/ReviewComp';
 import BottomButtons from '../Components/BottomButtons';
 import {useDispatch, useSelector} from 'react-redux';
 import {addToCart} from '../redux/slices/CartSlice';
+import {ALERT_TYPE, Dialog, Toast} from 'react-native-alert-notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useState} from 'react';
 
 function ProductDetails({navigation, route: {params}}) {
   const cryptoRate = useSelector(state => state.coin.cryptoRate);
   const [logData, setLogData] = useState();
+  const token = useSelector(state => state.token.token);
+  const selectCoin = useSelector(state => state.coin.selectedCoin);
 
   const dispatch = useDispatch();
 
@@ -47,8 +50,18 @@ function ProductDetails({navigation, route: {params}}) {
     return (
       <BottomButtons
         onPress={() => {
-          onAddToCart();
-          navigation.navigate('Cart');
+          if (selectCoin == 'Tether') {
+            Dialog.show({
+              type: ALERT_TYPE.DANGER,
+
+              textBody:
+                'Currently Tether USDT is not availble. Please change the coin',
+              button: 'Close',
+            });
+          } else {
+            onAddToCart();
+            navigation.navigate('Cart');
+          }
         }}
         price={(params.item.price / cryptoRate).toFixed(5)}
         buttonLabel="ADD"
@@ -107,12 +120,25 @@ function ProductDetails({navigation, route: {params}}) {
               />
             </View>
           </View>
+          <View style={{paddingVertical: scale(5)}}>
+            <TitleComp heading="Available Stoke" />
+            <View style={{paddingVertical: scale(20)}}>
+              <Label
+                text={
+                  params.item.product_stock == 0
+                    ? 'Out of Stoke'
+                    : params.item.product_stock
+                }
+                style={{fontSize: scale(14), lineHeight: scale(25)}}
+              />
+            </View>
+          </View>
           <View>
             <TitleComp heading={'Reviews'} />
-            <Pressable
+            {/* <Pressable
               onPress={() => navigation.navigate('WriteReview', {name})}>
-              {/* <Label text="Write your review" style={styles.wrtitle} /> */}
-            </Pressable>
+              <Label text="Write your review" style={styles.wrtitle} />
+            </Pressable> */}
 
             <ReviewComp />
           </View>
