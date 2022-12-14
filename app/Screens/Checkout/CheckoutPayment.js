@@ -22,7 +22,7 @@ export default function CheckoutPayment({navigation, route}) {
       </Pressable>
       <View style={{paddingTop: 10, alignItems: 'center'}}>
         <Image
-          style={{width: 100, height: 100}}
+          style={{width: 140, height: 100}}
           source={require('../../Icons/Metamask.png')}
         />
       </View>
