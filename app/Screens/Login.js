@@ -39,7 +39,6 @@ function Login({navigation}) {
         title: 'Fields are empty',
         textBody: 'Fill all the fields to continue',
       });
-    }
     if (userName && password) {
       console.log("🚀 ~ file: Login.js:45 password:",userName, password)
       setisloading(true);
@@ -53,10 +52,19 @@ function Login({navigation}) {
           setisloading(false);
           console.log('login data',res.data);
           storeData(res.data);
+          Toast.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: 'Success',
+            textBody: 'Logged In Successfully',
+          });
           navigation.navigate('Home');
           }else{
             setisloading(false);
-            Alert.alert('Invalid','Invalid username or password');
+            Toast.show({
+              type: ALERT_TYPE.DANGER,
+              title: 'Success',
+              textBody: 'Invaid Email or Password',
+            });
           }
         
         })
@@ -65,19 +73,10 @@ function Login({navigation}) {
           Alert.alert('Invalid username or password');
           setisloading(false);
         });
-    }
-  };
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('token');
-      if (value !== null) {
-        dispatch(setToken(value));
       }
-    } catch (e) {
-      console.log('error in getting');
     }
-  };
+
+  }
   
 
   return (
