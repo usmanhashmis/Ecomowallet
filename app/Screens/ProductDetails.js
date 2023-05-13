@@ -16,19 +16,33 @@ import ReviewComp from '../Components/ReviewComp';
 import BottomButtons from '../Components/BottomButtons';
 import {useDispatch, useSelector} from 'react-redux';
 import {addToCart} from '../redux/slices/CartSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useState} from 'react';
 
 function ProductDetails({navigation, route: {params}}) {
   const cryptoRate = useSelector(state => state.coin.cryptoRate);
+  const [logData, setLogData] = useState();
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    AsyncStorage.getItem('loginData')
+      .then(res => {
+       const value =  JSON.parse(res);
+        setLogData(value);
+       
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
   }, []);
 
   const onAddToCart = () => {
     dispatch(addToCart(params.item));
   };
 
+  // console.log('datatatatta', logData.token);
   const _renderBottom = () => {
     return (
       <BottomButtons
@@ -104,7 +118,7 @@ function ProductDetails({navigation, route: {params}}) {
           </View>
         </View>
       </Container>
-      {_renderBottom()}
+      {logData?.token &&_renderBottom()}
     </>
   );
 }

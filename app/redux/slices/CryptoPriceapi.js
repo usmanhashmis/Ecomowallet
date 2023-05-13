@@ -18,7 +18,7 @@ export const getCryptoPrice = createAsyncThunk(
       .post('https://api.livecoinwatch.com/coins/list', datapara, {
         headers: {
           'content-Type': 'application/json',
-          'x-api-key': '75d4be43-8ea5-459d-9ddf-0e7ac0d9bec9',
+          'x-api-key': 'b141c0dc-306d-4d71-9f9f-07545409248a',
         },
       })
       .then(res => (tem = res.data))

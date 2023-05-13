@@ -37,6 +37,7 @@ export default function BottomButtons({
               fontWeight: '800',
               color: appColors.primary,
               marginTop: scale(7),
+              marginRight: 20,
             }}
           />
         )}

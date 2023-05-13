@@ -7,6 +7,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSelector, useDispatch} from 'react-redux';
 import {changeCoin} from '../redux/slices/selectedCoinSlice';
 import axios from 'axios';
+import {BASE_URL} from '../Constants';
 
 export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
   const dispatch = useDispatch();
@@ -18,8 +19,9 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
 
   useEffect(() => {
     axios
-      .get('https://drab-cyan-fossa-kilt.cyclic.app/prices/getprices')
-      .then(res => setCoinsArray(res.data[0].coin_name));
+      .get(`${BASE_URL}/prices/getprices`)
+      .then(res => setCoinsArray(res.data[0].coin_name))
+      .catch(e => console.log(e.message));
   }, []);
 
   const pressCrypto = () => {

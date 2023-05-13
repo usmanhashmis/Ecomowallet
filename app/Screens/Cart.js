@@ -11,11 +11,13 @@ import Feather from 'react-native-vector-icons/Feather';
 import CheckOutItem from '../Components/CheckOutItem';
 import Empty from '../Components/Empty';
 import {useDispatch, useSelector} from 'react-redux';
-import {removeFromCart, getTotalPrice} from '../redux/slices/CartSlice';
+import {removeFromCart} from '../redux/slices/CartSlice';
+import {getTotalPrice} from '../redux/slices/totalpriceSlice';
 
 function Cart({navigation}) {
   const cart = useSelector(state => state.cart);
   const cryptoRate = useSelector(state => state.coin.cryptoRate);
+  const tPrice = useSelector(state => state.totalPrice.totalPrice);
 
   const dispatch = useDispatch();
 
@@ -28,8 +30,12 @@ function Cart({navigation}) {
     cart.cartItems.forEach(item => {
       totalPrice += item.price * item.quantity;
     });
-    return `${(totalPrice / cryptoRate).toFixed(5)}`;
+    return (totalPrice / cryptoRate).toFixed(5);
   };
+
+  useEffect(() => {
+    dispatch(getTotalPrice(Number(totalPrice())));
+  }, [totalPrice]);
 
   const ItemCard = ({item}) => {
     const {product_name, price, product_img, quantity, _id} = item;

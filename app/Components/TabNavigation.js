@@ -14,10 +14,22 @@ import CheckOut from '../Screens/Checkout/CheckOut';
 import CheckOutAddress from '../Screens/Checkout/CheckoutAddress';
 import CheckOutPayment from '../Screens/Checkout/CheckoutPayment';
 import {scale} from 'react-native-size-matters';
+import AllProducts from '../Screens/AllProducts';
+import {useState} from 'react';
+import {useSelector} from 'react-redux';
+import {useEffect} from 'react';
+import Settings from '../Screens/Settings';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigation = () => {
+  const [settnLog, setSettnLog] = useState('Login');
+  const token = useSelector(state => state.token.token);
+
+  useEffect(() => {
+    token ? null : setSettnLog('Login');
+  }, [token]);
+
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -55,6 +67,14 @@ const TabNavigation = () => {
           }}
         />
         <Tab.Screen
+          name="AllProducts"
+          component={AllProducts}
+          options={{
+            tabBarButton: props => null,
+            tabBarStyle: {display: 'none'},
+          }}
+        />
+        <Tab.Screen
           name="Cart"
           component={Cart}
           options={{
@@ -69,19 +89,35 @@ const TabNavigation = () => {
           }}
         />
 
-        <Tab.Screen
-          name="Login"
-          component={Login}
-          options={{
-            tabBarIcon: ({focused}) => (
-              <Icon
-                name="ios-person"
-                size={25}
-                color={focused ? appColors.primary : 'gray'}
-              />
-            ),
-          }}
-        />
+        {!token ? (
+          <Tab.Screen
+            name="Login"
+            component={Login}
+            options={{
+              tabBarIcon: ({focused}) => (
+                <Icon
+                  name="ios-person"
+                  size={25}
+                  color={focused ? appColors.primary : 'gray'}
+                />
+              ),
+            }}
+          />
+        ) :  (
+          <Tab.Screen
+            name="Settings"
+            component={Settings}
+            options={{
+              tabBarIcon: ({focused}) => (
+                <Icon
+                  name="ios-person"
+                  size={25}
+                  color={focused ? appColors.primary : 'gray'}
+                />
+              ),
+            }}
+          />
+        )}
 
         <Tab.Screen
           name="SignUp"

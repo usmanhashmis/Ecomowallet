@@ -52,7 +52,7 @@ export default function ProductCard({navigation, item}) {
 
           <View style={{paddingVertical: scale(5)}}>
             <Label
-              text={coinSymbol + (price / cryptoRate).toFixed(4)}
+              text={(price / cryptoRate).toFixed(9)}
               style={{
                 fontSize: scale(18),
                 color: appColors.primary,

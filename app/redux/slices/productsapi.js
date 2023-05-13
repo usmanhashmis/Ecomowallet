@@ -1,11 +1,12 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import {BASE_URL} from '../../Constants';
 
 export const getproducts = createAsyncThunk(
   'productSlice/getproducts',
   async () => {
-    return await fetch(
-      'https://drab-cyan-fossa-kilt.cyclic.app/categories/getproduct',
-    ).then(res => res.json());
+    return await fetch(`${BASE_URL}/categories/getproduct`)
+      .then(res => res.json())
+      .catch(e => console.log(e.message));
   },
 );
 

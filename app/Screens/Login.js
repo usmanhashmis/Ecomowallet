@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Pressable} from 'react-native';
+import {View, Text, Pressable, Alert} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import Container from '../Components/Container';
 import CustomInput from '../Components/CustomInput';
@@ -7,26 +7,57 @@ import CustomButton from '../Components/CustomButton';
 import Label from '../Components/Label';
 import {appColors, shadow} from '../utils/appColors';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch, useSelector} from 'react-redux';
+import {setToken} from '../redux/slices/tokenSlice';
+import {BASE_URL} from '../Constants';
 
 function Login({navigation}) {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [isloading, setisloading] = useState(false);
+  const token = useSelector(state => state.token.token);
 
+  const dispatch = useDispatch();
+
+  const storeData = async value => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('loginData', jsonValue);
+    } catch (e) {
+      console.log('Error in token Saving');
+    }
+  };
+
+ 
+  console.log(token);
   const onLogin = async () => {
+    console.log("🚀 ~ file: Login.js:45 ~ onLogin ~ password:",userName, password)
     if (userName && password) {
+      console.log("🚀 ~ file: Login.js:45 password:",userName, password)
       setisloading(true);
       await axios
-        .post('/users/login', {
+        .post(`${BASE_URL}/users/login`, {
           username: userName,
           password: password,
         })
         .then(res => {
+          if(res.data.token){
           setisloading(false);
-          console.log(res.data);
+          console.log('login data',res.data);
+          storeData(res.data);
           navigation.navigate('Home');
+          }else{
+            setisloading(false);
+            Alert.alert('Invalid','Invalid username or password');
+          }
+        
         })
-        .catch(error => console.log(error));
+        .catch(error => {
+          console.log(error);
+          Alert.alert('Invalid username or password');
+          setisloading(false);
+        });
     }
   };
 

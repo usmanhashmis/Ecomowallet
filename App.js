@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, View, Platform} from 'react-native';
+import {StyleSheet, View, Platform, LogBox} from 'react-native';
 import TabNavigation from './app/Components/TabNavigation';
 import {Provider} from 'react-redux';
 import Store from './app/redux/Store';
@@ -13,12 +13,12 @@ export default function App() {
   const newWallet = web3.eth.accounts.wallet.create(1);
   const newAccount = newWallet[0];
   console.log(newAccount);
+  LogBox.ignoreAllLogs();
   return (
     <>
       <Provider store={Store}>
         <TabNavigation />
       </Provider>
     </>
-    //hashmi branch
   );
 }
