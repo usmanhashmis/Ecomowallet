@@ -1,0 +1,155 @@
+import React, {useState} from 'react';
+import {View, Text, Pressable, Alert, Button} from 'react-native';
+import {scale} from 'react-native-size-matters';
+import Container from '../Components/Container';
+import CustomInput from '../Components/CustomInput';
+import CustomButton from '../Components/CustomButton';
+import Label from '../Components/Label';
+import {appColors, shadow} from '../utils/appColors';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch, useSelector} from 'react-redux';
+import {setToken} from '../redux/slices/tokenSlice';
+import {ALERT_TYPE, Dialog, Toast} from 'react-native-alert-notification';
+
+function Login({navigation}) {
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+  const [isloading, setisloading] = useState(false);
+  const token = useSelector(state => state.token.token);
+  const [showAlert, setShowAlert] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const storeData = async value => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('loginData', jsonValue);
+    } catch (e) {
+      console.log('Error in token Saving');
+    }
+  };
+
+ 
+  console.log(token);
+  const onLogin = async () => {
+    if (!(userName && password)) {
+      Toast.show({
+        type: ALERT_TYPE.WARNING,
+        title: 'Fields are empty',
+        textBody: 'Fill all the fields to continue',
+      });
+    if (userName && password) {
+      console.log("🚀 ~ file: Login.js:45 password:",userName, password)
+      setisloading(true);
+      await axios
+        .post(`${BASE_URL}/users/login`, {
+          username: userName,
+          password: password,
+        })
+        .then(res => {
+          if(res.data.token){
+          setisloading(false);
+          console.log('login data',res.data);
+          storeData(res.data);
+          Toast.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: 'Success',
+            textBody: 'Logged In Successfully',
+          });
+          navigation.navigate('Home');
+          }else{
+            setisloading(false);
+            Toast.show({
+              type: ALERT_TYPE.DANGER,
+              title: 'Success',
+              textBody: 'Invaid Email or Password',
+            });
+          }
+        
+        })
+        .catch(error => {
+          console.log(error);
+          Alert.alert('Invalid username or password');
+          setisloading(false);
+        });
+      }
+    }
+
+  }
+  
+
+  return (
+    <Container isScrollable>
+      <View
+        style={{
+          marginTop: '30%',
+          marginHorizontal: '5%',
+          backgroundColor: appColors.white,
+          ...shadow,
+          padding: scale(15),
+          borderRadius: scale(20),
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+          }}>
+          <Label
+            text="Welcome"
+            style={{fontSize: scale(30), fontWeight: '700'}}
+          />
+        </View>
+        <View style={{paddingVertical: scale(15)}}>
+          <Label
+            text="Log in to Continue"
+            style={{
+              fontSize: scale(16),
+              //fontWeight: '500',
+              color: appColors.darkGray,
+            }}
+          />
+        </View>
+        <View>
+          <CustomInput onChangeText={setUserName} placeholder="USERNAME" />
+        </View>
+        <View>
+          <CustomInput
+            onChangeText={setPassword}
+            secureTextEntry
+            placeholder="PASSWORD"
+          />
+        </View>
+        <Pressable
+          onPress={() => navigation.navigate('Verification')}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            paddingVertical: scale(10),
+          }}>
+          {/* <Label
+            text="Forgot password"
+            style={{
+              fontSize: scale(14),
+              fontWeight: '500',
+            }}
+          /> */}
+        </Pressable>
+        <CustomButton
+          isLoading={isloading}
+          onPress={onLogin}
+          label="Log in"
+          labelStyle={{fontWeight: '500'}}
+        />
+        <CustomButton
+          onPress={() => navigation.navigate('SignUp')}
+          label="Sign Up"
+          labelStyle={{fontWeight: '500'}}
+        />
+      </View>
+    </Container>
+  );
+}
+
+export default Login;
