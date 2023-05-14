@@ -1,7 +1,14 @@
-import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
-import React from "react";
-import { colors, network } from "../../constants";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import React from 'react';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {appColors} from '../../utils/appColors';
 
 const ProductCard = ({
   name,
@@ -14,26 +21,25 @@ const ProductCard = ({
 }) => {
   return (
     <TouchableOpacity
-      style={[styles.container, { width: cardSize === "large" ? "100%" : 150 }]}
-      onPress={onPress}
-    >
+      activeOpacity={0.8}
+      style={[styles.container, {width: cardSize === 'large' ? '100%' : 150}]}
+      onPress={onPress}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: image }} style={styles.productImage} />
+        <Image source={{uri: image}} style={styles.productImage} />
       </View>
       <View style={styles.infoContainer}>
         <View>
           <Text style={styles.secondaryTextSm}>{`${name.substring(
             0,
-            10
+            10,
           )}..`}</Text>
-          <Text style={styles.primaryTextSm}>{price}$</Text>
+          <Text style={styles.primaryTextSm}>{price}</Text>
         </View>
         <View>
           {quantity > 0 ? (
             <TouchableOpacity
               style={styles.iconContainer}
-              onPress={onPressSecondary}
-            >
+              onPress={onPressSecondary}>
               <Ionicons name="cart" size={20} color="white" />
             </TouchableOpacity>
           ) : (
@@ -51,68 +57,69 @@ export default ProductCard;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
+    backgroundColor: appColors.white,
     width: 150,
     height: 200,
     borderRadius: 10,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     padding: 5,
     elevation: 5,
   },
   imageContainer: {
-    backgroundColor: colors.light,
-    width: "100%",
+    backgroundColor: appColors.light,
+    width: '100%',
     height: 140,
     borderRadius: 10,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     padding: 5,
     paddingBottom: 0,
   },
   productImage: {
-    height: 120,
-    width: 120,
+    borderRadius: 10,
+    height: 140,
+    width: 140,
   },
   infoContainer: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 5,
   },
   secondaryTextSm: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   primaryTextSm: {
     fontSize: 15,
-    fontWeight: "bold",
-    color: colors.primary,
+    fontWeight: 'bold',
+    color: appColors.primary,
   },
   iconContainer: {
-    backgroundColor: colors.primary,
+    backgroundColor: appColors.primary,
     width: 30,
     height: 30,
     borderRadius: 5,
-    display: "flex",
+    display: 'flex',
 
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   iconContainerDisable: {
-    backgroundColor: colors.muted,
+    backgroundColor: appColors.primary,
     width: 30,
     height: 30,
     borderRadius: 5,
-    display: "flex",
+    display: 'flex',
 
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

@@ -74,7 +74,7 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
         />
       </View>
 
-      <Pressable
+      {/* <Pressable
         onPress={() => navigation.navigate('Cart')}
         style={{
           borderRadius: scale(20),
@@ -87,7 +87,7 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
           marginRight: scale(10),
         }}>
         <Ionicons name={'person'} size={scale(18)} color={appColors.white} />
-      </Pressable>
+      </Pressable> */}
       <View
         style={{
           flexDirection: 'column',
@@ -101,10 +101,11 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
             backgroundColor: appColors.primary,
             justifyContent: 'center',
             alignItems: 'center',
-            marginLeft: scale(0),
+            marginLeft: scale(10),
           }}>
           <Text
             style={{
+              
               color: 'white',
             }}>
             {selectCoin}

@@ -18,17 +18,27 @@ import AllProducts from '../Screens/AllProducts';
 import {useState} from 'react';
 import {useSelector} from 'react-redux';
 import {useEffect} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Settings from '../Screens/Settings';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigation = () => {
-  const [settnLog, setSettnLog] = useState('Login');
+  const [logData, setLogData] = useState();
   const token = useSelector(state => state.token.token);
 
+
   useEffect(() => {
-    token ? null : setSettnLog('Login');
-  }, [token]);
+    AsyncStorage.getItem('loginData')
+      .then(res => {
+       const value =  JSON.parse(res);
+        setLogData(value);
+       
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
+  }, [logData,token]);
 
   return (
     <NavigationContainer>
@@ -89,7 +99,7 @@ const TabNavigation = () => {
           }}
         />
 
-        {!token ? (
+        {!logData?.token ? (
           <Tab.Screen
             name="Login"
             component={Login}

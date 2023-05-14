@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, TextInput, View } from "react-native";
-import { colors } from "../../constants";
+import { appColors } from "../../utils/appColors";
 
 const CustomInput = ({
   value,
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: "100%",
     padding: 5,
-    backgroundColor: colors.white,
+    backgroundColor: appColors.white,
     elevation: 5,
     paddingHorizontal: 20,
   },

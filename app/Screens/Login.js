@@ -16,25 +16,23 @@ function Login({navigation}) {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [isloading, setisloading] = useState(false);
-  const token = useSelector(state => state.token.token);
 
   const dispatch = useDispatch();
 
   const storeData = async value => {
     try {
       const jsonValue = JSON.stringify(value)
-      await AsyncStorage.setItem('loginData', jsonValue);
+      await AsyncStorage.setItem('loginData', jsonValue)
+      console.log("saved async data");
     } catch (e) {
       console.log('Error in token Saving');
     }
   };
 
  
-  console.log(token);
+ 
   const onLogin = async () => {
-    console.log("🚀 ~ file: Login.js:45 ~ onLogin ~ password:",userName, password)
     if (userName && password) {
-      console.log("🚀 ~ file: Login.js:45 password:",userName, password)
       setisloading(true);
       await axios
         .post(`${BASE_URL}/users/login`, {
@@ -46,6 +44,7 @@ function Login({navigation}) {
           setisloading(false);
           console.log('login data',res.data);
           storeData(res.data);
+          dispatch(setToken(res.data.token));
           navigation.navigate('Home');
           }else{
             setisloading(false);
@@ -97,7 +96,7 @@ function Login({navigation}) {
           <CustomInput
             onChangeText={setUserName}
             label="UserName"
-            placeholder="alimohsin"
+            placeholder="username"
           />
         </View>
         <View style={{paddingVertical: scale(10)}}>
@@ -115,13 +114,13 @@ function Login({navigation}) {
             justifyContent: 'flex-end',
             paddingVertical: scale(10),
           }}>
-          <Label
+          {/* <Label
             text="Forgot password"
             style={{
               fontSize: scale(14),
               fontWeight: '500',
             }}
-          />
+          /> */}
         </Pressable>
         <CustomButton
           isLoading={isloading}

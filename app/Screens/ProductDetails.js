@@ -22,6 +22,8 @@ import {useState} from 'react';
 function ProductDetails({navigation, route: {params}}) {
   const cryptoRate = useSelector(state => state.coin.cryptoRate);
   const [logData, setLogData] = useState();
+  const token = useSelector(state => state.token.token);
+
 
   const dispatch = useDispatch();
 
@@ -31,12 +33,11 @@ function ProductDetails({navigation, route: {params}}) {
       .then(res => {
        const value =  JSON.parse(res);
         setLogData(value);
-       
       })
       .catch(error => {
         console.log(error.message);
       });
-  }, []);
+  }, [logData,token]);
 
   const onAddToCart = () => {
     dispatch(addToCart(params.item));
