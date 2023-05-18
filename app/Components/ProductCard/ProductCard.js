@@ -4,11 +4,17 @@ import {
   TouchableOpacity,
   View,
   Image,
+  ToastAndroid,
   TouchableWithoutFeedback,
 } from 'react-native';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {appColors} from '../../utils/appColors';
+import {
+  heightPercentageToDP,
+  widthPercentageToDP,
+} from 'react-native-responsive-screen';
+import {useSelector, useDispatch} from 'react-redux';
 
 const ProductCard = ({
   name,
@@ -19,6 +25,8 @@ const ProductCard = ({
   onPressSecondary,
   cardSize,
 }) => {
+  const cryptoRate = useSelector(state => state.coin.cryptoRate);
+
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -33,20 +41,16 @@ const ProductCard = ({
             0,
             10,
           )}..`}</Text>
-          <Text style={styles.primaryTextSm}>{price}</Text>
+          <Text style={styles.primaryTextSm}>
+            {(price / cryptoRate).toFixed(5)}
+          </Text>
         </View>
         <View>
-          {quantity > 0 ? (
-            <TouchableOpacity
-              style={styles.iconContainer}
-              onPress={onPressSecondary}>
-              <Ionicons name="cart" size={20} color="white" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.iconContainerDisable} disabled>
-              <Ionicons name="cart" size={20} color="white" />
-            </TouchableOpacity>
-          )}
+          {/* <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => onPressSecondary()}>
+            <Ionicons name="cart" size={20} color="white" />
+          </TouchableOpacity> */}
         </View>
       </View>
     </TouchableOpacity>
@@ -59,7 +63,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: appColors.white,
     width: 150,
-    height: 200,
+    height: 210,
     borderRadius: 10,
     display: 'flex',
     flexDirection: 'column',
@@ -114,8 +118,8 @@ const styles = StyleSheet.create({
   },
   iconContainerDisable: {
     backgroundColor: appColors.primary,
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     borderRadius: 5,
     display: 'flex',
 

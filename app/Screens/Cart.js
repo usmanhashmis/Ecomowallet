@@ -13,6 +13,7 @@ import Empty from '../Components/Empty';
 import {useDispatch, useSelector} from 'react-redux';
 import {removeFromCart} from '../redux/slices/CartSlice';
 import {getTotalPrice} from '../redux/slices/totalpriceSlice';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 
 function Cart({navigation}) {
   const cart = useSelector(state => state.cart);
@@ -38,7 +39,8 @@ function Cart({navigation}) {
   }, [totalPrice]);
 
   const ItemCard = ({item}) => {
-    const {product_name, price, product_img, quantity, _id} = item;
+    const {product_name, price, product_img, quantity, _id, product_stock} =
+      item;
     return (
       <CheckOutItem
         name={product_name}
@@ -46,6 +48,7 @@ function Cart({navigation}) {
         price={price}
         quantity={quantity}
         id={_id}
+        stoke={product_stock}
       />
     );
   };
@@ -61,6 +64,7 @@ function Cart({navigation}) {
               color={appColors.black}
             />
           </Pressable>
+
           <SwipeListView
             ListEmptyComponent={() => <Empty label={'Your Cart is empty'} />}
             showsVerticalScrollIndicator={false}

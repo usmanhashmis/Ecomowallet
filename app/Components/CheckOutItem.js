@@ -59,7 +59,7 @@ export default function CheckOutItem({
             alignItems: 'center',
           }}>
           <Label
-            text={(price / cryptoRate).toFixed(3)}
+            text={(price / cryptoRate).toFixed(5)}
             style={{
               fontSize: scale(18),
               fontWeight: '500',

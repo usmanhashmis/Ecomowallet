@@ -4,6 +4,7 @@ import {
   View,
   StatusBar,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import UserProfileCard from '../../Components/UserProfileCard/UserProfileCard';
@@ -16,23 +17,25 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Container from '../../Components/Container';
+import {useSelector} from 'react-redux';
 
 const Settings = ({navigation, route}) => {
   const [userInfo, setUserInfo] = useState({});
-  // const { user } = route.params;
+  const [logData, setLogData] = useState('');
+  const token = useSelector(state => state.token.token);
 
-  const convertToJSON = obj => {
-    try {
-      setUserInfo(JSON.parse(obj));
-    } catch (e) {
-      setUserInfo(obj);
-    }
-  };
+  useEffect(() => {
+    AsyncStorage.getItem('loginData')
+      .then(res => {
+        const value = JSON.parse(res);
+        setLogData(value);
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
+  }, [logData, token]);
 
-  // covert  the user to Json object on initial render
-  // useEffect(() => {
-  //   convertToJSON(user);
-  // }, []);
+  // console.log(logData);
   return (
     <Container bodyStyle={{marginTop: hp(12)}}>
       <StatusBar style="auto"></StatusBar>
@@ -43,12 +46,12 @@ const Settings = ({navigation, route}) => {
       <View style={styles.UserProfileCardContianer}>
         <UserProfileCard
           Icon={Ionicons}
-          name={'Ali Mohsin'}
-          email={'alimohsin1236@gmail.com'}
+          name={logData ? logData.username : ''}
+          email={logData ? logData.email : ''}
         />
       </View>
       <View style={styles.OptionsContainer}>
-        <OptionList
+        {/* <OptionList
           text={'My Account'}
           Icon={Ionicons}
           iconName={'person'}
@@ -59,9 +62,9 @@ const Settings = ({navigation, route}) => {
           Icon={Ionicons}
           iconName={'heart'}
           onPress={() => navigation.navigate('mywishlist', {user: userInfo})}
-        />
+        /> */}
         {/* !For future use --- */}
-        <OptionList
+        {/* <OptionList
           text={'Settings'}
           Icon={Ionicons}
           iconName={'settings-sharp'}
@@ -72,16 +75,33 @@ const Settings = ({navigation, route}) => {
           Icon={Ionicons}
           iconName={'help-circle'}
           onPress={() => console.log('working....')}
-        />
+        /> */}
         {/* !For future use ---- End */}
         <OptionList
           text={'Logout'}
           Icon={Ionicons}
           iconName={'log-out'}
-          onPress={async () => {
-            navigation.navigate('Home');
-            await AsyncStorage.removeItem('loginData');
-            console.log('token removed');
+          onPress={() => {
+            Alert.alert(
+              'Log Out',
+              'Press yes to log out from your account. ',
+              [
+                {
+                  text: 'Yes',
+                  onPress: async () => {
+                    navigation.navigate('Home');
+                    await AsyncStorage.removeItem('loginData');
+                    console.log('token removed');
+                  },
+                },
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel button pressed'),
+                  style: 'cancel',
+                },
+              ],
+              {cancelable: false},
+            );
           }}
         />
       </View>

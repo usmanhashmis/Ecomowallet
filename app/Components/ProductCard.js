@@ -56,7 +56,7 @@ export default function ProductCard({navigation, item}) {
               style={{
                 fontSize: scale(18),
                 color: appColors.primary,
-                fontWeight: '500',
+                fontWeight: '400',
               }}
             />
           </View>

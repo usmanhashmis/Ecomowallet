@@ -20,6 +20,7 @@ import {useSelector} from 'react-redux';
 import {useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Settings from '../Screens/Settings';
+import Categories from '../Screens/Categories';
 
 const Tab = createBottomTabNavigator();
 
@@ -27,18 +28,16 @@ const TabNavigation = () => {
   const [logData, setLogData] = useState();
   const token = useSelector(state => state.token.token);
 
-
   useEffect(() => {
     AsyncStorage.getItem('loginData')
       .then(res => {
-       const value =  JSON.parse(res);
+        const value = JSON.parse(res);
         setLogData(value);
-       
       })
       .catch(error => {
         console.log(error.message);
       });
-  }, [logData,token]);
+  }, [logData, token]);
 
   return (
     <NavigationContainer>
@@ -85,6 +84,14 @@ const TabNavigation = () => {
           }}
         />
         <Tab.Screen
+          name="Categories"
+          component={Categories}
+          options={{
+            tabBarButton: props => null,
+            tabBarStyle: {display: 'none'},
+          }}
+        />
+        <Tab.Screen
           name="Cart"
           component={Cart}
           options={{
@@ -113,7 +120,7 @@ const TabNavigation = () => {
               ),
             }}
           />
-        ) :  (
+        ) : (
           <Tab.Screen
             name="Settings"
             component={Settings}

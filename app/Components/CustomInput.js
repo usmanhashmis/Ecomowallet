@@ -34,6 +34,7 @@ const CustomInput = ({
         />
         <TextInput
           autoCorrect={false}
+          autoCapitalize="none"
           onFocus={() => {
             onFocus();
             setIsFocused(true);
@@ -64,7 +65,7 @@ const style = StyleSheet.create({
   label: {
     marginVertical: 5,
     fontSize: 14,
-    fontWeight:'700',
+    fontWeight: '700',
     color: appColors.black,
   },
   inputContainer: {

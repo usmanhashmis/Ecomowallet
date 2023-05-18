@@ -32,7 +32,7 @@ import AllProductCard from '../Components/AllProductCard';
 import Feather from 'react-native-vector-icons/Feather';
 import {heightPercentageToDP} from 'react-native-responsive-screen';
 
-const AllProducts = ({navigation, route}) => {
+const Categories = ({navigation, route}) => {
   const products = useSelector(state => state.productReducer.products);
   const cryptoprices = useSelector(state => state.crypto.cryptoPrices);
   const selectCoin = useSelector(state => state.coin.selectedCoin);
@@ -40,12 +40,30 @@ const AllProducts = ({navigation, route}) => {
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const textInputRef = useRef(null);
+  const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     handleSearch();
   }, [searchText]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, [loading]);
+
+  useEffect(() => {
+    if (route?.params?.categoryID) {
+      const filtered = products?.filter(item =>
+        item?.categoryWise
+          ?.toLowerCase()
+          .includes(route?.params?.categoryID.toLowerCase()),
+      );
+      setSearchResults(filtered);
+    }
+  }, [route?.params?.categoryID]);
 
   useEffect(() => {
     dispatch(getproducts());
@@ -82,8 +100,8 @@ const AllProducts = ({navigation, route}) => {
             borderRadius: scale(20),
             // borderWidth: 1,
             alignItems: 'center',
-            backgroundColor: appColors.white,
-            shadowColor: '#000',
+            // backgroundColor: appColors.white,
+            // shadowColor: '#000',
             shadowOpacity: 0.06,
             shadowOffset: {
               width: 10,
@@ -93,7 +111,7 @@ const AllProducts = ({navigation, route}) => {
             height: scale(40),
             marginRight: 10,
           }}>
-          <Feather name="search" size={scale(20)} color={appColors.black} />
+          {/* <Feather name="search" size={scale(20)} color={appColors.black} />
           <TextInput
             ref={textInputRef}
             placeholder="Search Products"
@@ -101,10 +119,15 @@ const AllProducts = ({navigation, route}) => {
             autoCapitalize="none"
             onChangeText={text => setSearchText(text)}
             style={{flex: 1, paddingLeft: scale(10)}}
-          />
+          /> */}
         </View>
       </View>
-      <ScrollView style={{marginTop: 20}}>
+      <View style={styles.primaryTextContainer}>
+        <Text style={styles.primaryText}>
+          {route?.params?.categoryID} Products
+        </Text>
+      </View>
+      <ScrollView style={{marginTop: 20, marginLeft: 7}}>
         {!searchResults?.length == 0 ? (
           <FlatList
             showsHorizontalScrollIndicator={false}
@@ -130,11 +153,19 @@ const AllProducts = ({navigation, route}) => {
   );
 };
 
-export default AllProducts;
+export default Categories;
 
 const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: 'space-between', // Distribute the products vertically
+  },
+  primaryText: {
+    color: appColors.black,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  primaryTextContainer: {
+    paddingVertical: 20,
   },
 });

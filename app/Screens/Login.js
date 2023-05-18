@@ -11,6 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setToken} from '../redux/slices/tokenSlice';
 import {BASE_URL} from '../Constants';
+import {heightPercentageToDP} from 'react-native-responsive-screen';
+import {ALERT_TYPE, Dialog, Toast} from 'react-native-alert-notification';
 
 function Login({navigation}) {
   const [userName, setUserName] = useState('');
@@ -21,17 +23,22 @@ function Login({navigation}) {
 
   const storeData = async value => {
     try {
-      const jsonValue = JSON.stringify(value)
-      await AsyncStorage.setItem('loginData', jsonValue)
-      console.log("saved async data");
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('loginData', jsonValue);
+      console.log('saved async data');
     } catch (e) {
       console.log('Error in token Saving');
     }
   };
 
- 
- 
   const onLogin = async () => {
+    if (!(userName && password)) {
+      Toast.show({
+        type: ALERT_TYPE.WARNING,
+        title: 'Fields are empty',
+        textBody: 'Fill all the fields to continue',
+      });
+    }
     if (userName && password) {
       setisloading(true);
       await axios
@@ -40,17 +47,25 @@ function Login({navigation}) {
           password: password,
         })
         .then(res => {
-          if(res.data.token){
-          setisloading(false);
-          console.log('login data',res.data);
-          storeData(res.data);
-          dispatch(setToken(res.data.token));
-          navigation.navigate('Home');
-          }else{
+          if (res.data.token) {
             setisloading(false);
-            Alert.alert('Invalid','Invalid username or password');
+            console.log('login data', res.data);
+            storeData(res.data);
+            dispatch(setToken(res.data.token));
+            Toast.show({
+              type: ALERT_TYPE.SUCCESS,
+              title: 'Success',
+              textBody: 'Logged In Successfully',
+            });
+            navigation.navigate('Home');
+          } else {
+            setisloading(false);
+            Toast.show({
+              type: ALERT_TYPE.DANGER,
+              title: 'Success',
+              textBody: 'Invaid Email or Password Please Try Again',
+            });
           }
-        
         })
         .catch(error => {
           console.log(error);
@@ -64,7 +79,7 @@ function Login({navigation}) {
     <Container isScrollable>
       <View
         style={{
-          marginTop: scale(65),
+          marginTop: heightPercentageToDP(16),
           marginHorizontal: scale(20),
           backgroundColor: appColors.white,
           ...shadow,

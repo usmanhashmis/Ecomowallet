@@ -8,16 +8,27 @@ import {useSelector, useDispatch} from 'react-redux';
 import {changeCoin} from '../redux/slices/selectedCoinSlice';
 import axios from 'axios';
 import {BASE_URL} from '../Constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {setToken} from '../redux/slices/tokenSlice';
 
-export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
+export default function SearchBox({
+  autoFocus,
+  onFoucs,
+  rightIcon,
+  navigation,
+  hide,
+}) {
   const dispatch = useDispatch();
   const selectCoin = useSelector(state => state.coin.selectedCoin);
   const [coinsArray, setCoinsArray] = useState([]);
   const [display, setDisplay] = useState('none');
+  const [logDisplay, setLogDisplay] = useState('none');
   const [displayEther, setDisplayEther] = useState('none');
   const [displayMatic, setDisplayMatic] = useState('none');
+  const token = useSelector(state => state.token.token);
 
   useEffect(() => {
+    dispatch(changeCoin('Tether'));
     axios
       .get(`${BASE_URL}/prices/getprices`)
       .then(res => setCoinsArray(res.data[0].coin_name))
@@ -27,10 +38,15 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
   const pressCrypto = () => {
     if (display === 'none') setDisplay('flex');
     else setDisplay('none');
+
     coinsArray.map(item => {
       if (item === 'Ethereum') setDisplayEther('flex');
       if (item === 'Polygon') setDisplayMatic('flex');
     });
+  };
+  const pressLog = () => {
+    if (logDisplay === 'none') setLogDisplay('flex');
+    else setLogDisplay('none');
   };
 
   const etherPress = () => {
@@ -57,37 +73,30 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
       <View
         style={{
           flex: 1,
-
           paddingHorizontal: scale(20),
           borderRadius: scale(20),
+          // borderWidth: 1,
           alignItems: 'center',
           backgroundColor: appColors.white,
+          shadowColor: '#000',
+          shadowOpacity: 0.06,
+          shadowOffset: {
+            width: 10,
+            height: 10,
+          },
           flexDirection: 'row',
           height: scale(40),
+          marginRight: 10,
         }}>
         <Feather name="search" size={scale(20)} color={appColors.black} />
         <TextInput
           placeholder="Search Products"
-          autoFocus={autoFocus}
+          showSoftInputOnFocus={false}
           onFocus={onFoucs && onFoucs}
           style={{flex: 1, paddingLeft: scale(10)}}
         />
       </View>
 
-      {/* <Pressable
-        onPress={() => navigation.navigate('Cart')}
-        style={{
-          borderRadius: scale(20),
-          width: scale(40),
-          height: scale(40),
-          backgroundColor: appColors.primary,
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginLeft: scale(10),
-          marginRight: scale(10),
-        }}>
-        <Ionicons name={'person'} size={scale(18)} color={appColors.white} />
-      </Pressable> */}
       <View
         style={{
           flexDirection: 'column',
@@ -101,11 +110,10 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
             backgroundColor: appColors.primary,
             justifyContent: 'center',
             alignItems: 'center',
-            marginLeft: scale(10),
+            marginLeft: scale(0),
           }}>
           <Text
             style={{
-              
               color: 'white',
             }}>
             {selectCoin}
@@ -126,7 +134,7 @@ export default function SearchBox({autoFocus, onFoucs, rightIcon, navigation}) {
             }}>
             <Button
               onPress={etherPress}
-              title="Ethr"
+              title="Ether"
               color={appColors.primary}
             />
           </View>

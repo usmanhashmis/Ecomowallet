@@ -14,7 +14,7 @@ export default function CheckoutAddress({navigation, route}) {
   const [phoneNo, setPhoneNo] = useState();
 
   const totalPrice = route.params.totalPrice;
-
+  console.log(totalPrice, 'tp in address');
   return (
     <Container
       isScrollable
@@ -71,18 +71,7 @@ export default function CheckoutAddress({navigation, route}) {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-            }}>
-            <CustomInput
-              containerStyle={{backgroundColor: 'transparent'}}
-              value="Punjab"
-              label="State"
-            />
-            <CustomInput
-              containerStyle={{backgroundColor: 'transparent'}}
-              value="Pakistan"
-              label="Country"
-            />
-          </View>
+            }}></View>
         </View>
         <View
           style={{

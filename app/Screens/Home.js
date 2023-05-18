@@ -8,6 +8,7 @@ import {
   RefreshControl,
   Image,
   Dimensions,
+  ToastAndroid,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 
@@ -33,6 +34,8 @@ import {
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
 import Swiper from 'react-native-swiper';
+import {addToCart} from '../redux/slices/CartSlice';
+import {ALERT_TYPE, Dialog} from 'react-native-alert-notification';
 
 const {width} = Dimensions.get('window');
 
@@ -46,8 +49,10 @@ const Home = ({navigation}) => {
 
   const images = [
     {id: '1', url: require('../static/images/banners/banner.png')},
-    {id: '2', url: require('../static/images/banners/banner.png')},
-    {id: '3', url: require('../static/images/banners/banner.png')},
+    {id: '2', url: require('../static/images/banners/banner1.jpg')},
+    {id: '3', url: require('../static/images/banners/banner2.jpg')},
+    {id: '3', url: require('../static/images/banners/banner3.jpg')},
+    {id: '3', url: require('../static/images/banners/banner4.jpg')},
   ];
 
   const renderImage = ({item}) => {
@@ -67,7 +72,7 @@ const Home = ({navigation}) => {
 
     {
       _id: '62fe243858f7aa8230817f86',
-      title: 'Electornics',
+      title: 'Electronics',
       image: require('../static/icons/electronics.png'),
     },
     {
@@ -75,10 +80,11 @@ const Home = ({navigation}) => {
       title: 'Cosmentics',
       image: require('../static/icons/cosmetics.png'),
     },
+
     {
-      _id: '62fe246858f7aa8230817f8c',
-      title: 'Groceries',
-      image: require('../static/icons/grocery.png'),
+      _id: '62fe246858f7aa8256817f8c',
+      title: 'Gym',
+      image: require('../static/icons/gym.png'),
     },
   ];
 
@@ -87,6 +93,21 @@ const Home = ({navigation}) => {
     setTimeout(() => {
       setRefreshing(false);
     }, 500);
+  };
+
+  const handleAddToCat = item => {
+    if (selectCoin == 'Tether') {
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+
+        textBody:
+          'Currently Tether USDT is not availble. Please change the coin',
+        button: 'Close',
+      });
+    } else {
+      dispatch(addToCart(item));
+      ToastAndroid.show('Product added to the cart!', ToastAndroid.SHORT);
+    }
   };
 
   const handleProductPress = product => {
@@ -98,27 +119,27 @@ const Home = ({navigation}) => {
     dispatch(getCryptoPrice());
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   cryptoprices.map(item => {
-  //     if (selectCoin === item.name) {
-  //       dispatch(getRate(item.rate));
-  //     }
-  //   });
-  // }, [selectCoin]);
+  useEffect(() => {
+    cryptoprices.map(item => {
+      if (selectCoin === item.name) {
+        dispatch(getRate(item.rate));
+      }
+    });
+  }, [selectCoin]);
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     dispatch(getCryptoPrice());
-  //     cryptoprices.map(item => {
-  //       if (selectCoin === item.name) {
-  //         dispatch(getRate(item.rate));
-  //       }
-  //     });
-  //   }, 60000);
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, [cryptoprices]);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      dispatch(getCryptoPrice());
+      cryptoprices.map(item => {
+        if (selectCoin === item.name) {
+          dispatch(getRate(item.rate));
+        }
+      });
+    }, 60000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [cryptoprices]);
 
   const RenderTitle = ({heading, rightLabel}) => {
     return <TitleComp heading={heading} rightLabel={rightLabel} />;
@@ -126,136 +147,159 @@ const Home = ({navigation}) => {
 
   return (
     <Container isScrollable style={styles.container}>
-      <SearchBox
-        onFoucs={() => navigation.navigate('Search')}
-        navigation={navigation}
-      />
+      <TouchableOpacity activeOpacity={10}>
+        <SearchBox
+          onFoucs={() => navigation.navigate('AllProducts')}
+          navigation={navigation}
+        />
 
-      <View style={{paddingVertical: scale(15)}}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-          <View style={styles.primaryTextContainer}>
-            <Text style={styles.primaryText}>Categories</Text>
-          </View>
-
-          <CountdownCircleTimer
-            isPlaying
-            strokeWidth={5}
-            duration={60}
-            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-            colorsTime={[7, 5, 2, 0]}
-            size={40}
-            onComplete={() => {
-              return {shouldRepeat: true, delay: 1};
+        <View style={{paddingVertical: scale(15)}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}>
-            {({remainingTime}) => <Text>{remainingTime}</Text>}
-          </CountdownCircleTimer>
-        </View>
+            <View style={styles.primaryTextContainer}>
+              <Text style={styles.primaryText}>Categories</Text>
+            </View>
 
-        <View style={styles.categoryContainer}>
-          <FlatList
-            showsHorizontalScrollIndicator={false}
-            style={styles.flatListContainer}
-            horizontal={true}
-            data={category}
-            keyExtractor={(item, index) => `${item}-${index}`}
-            renderItem={({item, index}) => (
-              <View style={{marginBottom: 10}} key={index}>
-                <CustomIconButton
-                  key={index}
-                  text={item.title}
-                  image={item.image}
-                  onPress={() =>
-                    navigation.jumpTo('categories', {categoryID: item})
-                  }
-                />
-              </View>
-            )}
-          />
-          <View style={styles.emptyView}></View>
-        </View>
-      </View>
-      <View
-        style={{
-          margin: widthPercentageToDP(2),
-          width: widthPercentageToDP(90),
-          height: heightPercentageToDP(20),
-          borderRadius: 10,
-          overflow: 'hidden', // Add this line
-        }}>
-        <Swiper
-          autoplay={true}
-          autoplayTimeout={6}
-          showsPagination={true}
-          dotColor={'white'}
-          activeDotColor={appColors.primary}
-          nextButton={<Text style={{color: 'white'}}>Next</Text>}
-          prevButton={<Text style={{color: 'white'}}>Prev</Text>}>
-          {images.map(image => (
-            <View key={image.id}>{renderImage({item: image})}</View>
-          ))}
-        </Swiper>
-      </View>
-      <View>
-        <View
-          style={{
-            paddingBottom: scale(20),
-            paddingTop: scale(8),
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-          <View style={styles.primaryTextContainer}>
-            <Text style={styles.primaryText}>New Arrivals</Text>
+            <CountdownCircleTimer
+              isPlaying
+              strokeWidth={5}
+              duration={60}
+              colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+              colorsTime={[7, 5, 2, 0]}
+              size={40}
+              onComplete={() => {
+                return {shouldRepeat: true, delay: 1};
+              }}>
+              {({remainingTime}) => <Text>{remainingTime}</Text>}
+            </CountdownCircleTimer>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('AllProducts')}>
-            <Text>See All</Text>
-          </TouchableOpacity>
-        </View>
-        {!products.length == 0 ? (
-          <View style={styles.productCardContainer}>
+
+          <View style={styles.categoryContainer}>
             <FlatList
-              refreshControl={
-                <RefreshControl
-                  refreshing={refeshing}
-                  onRefresh={handleOnRefresh}
-                />
-              }
-              contentContainerStyle={{paddingTop: 10}}
               showsHorizontalScrollIndicator={false}
-              initialNumToRender={5}
+              style={styles.flatListContainer}
               horizontal={true}
-              data={products.slice(0, 4)}
-              keyExtractor={item => item._id}
+              data={category}
+              keyExtractor={(item, index) => `${item}-${index}`}
               renderItem={({item, index}) => (
-                <View
-                  key={item._id}
-                  style={{marginLeft: 5, marginBottom: 10, marginRight: 5}}>
-                  <ProductCard
-                    name={item.product_name}
-                    image={item.product_img}
-                    price={item.price}
-                    quantity={item.quantity}
-                    onPress={() => handleProductPress(item)}
-                    onPressSecondary={() => handleAddToCat(item)}
+                <View style={{marginBottom: 10}} key={index}>
+                  <CustomIconButton
+                    key={index}
+                    text={item.title}
+                    image={item.image}
+                    onPress={() =>
+                      navigation.jumpTo('Categories', {categoryID: item.title})
+                    }
                   />
                 </View>
               )}
             />
             <View style={styles.emptyView}></View>
           </View>
-        ) : (
-          <ActivityIndicator
-            style={{paddingTop: 130}}
-            size={50}
-            color={appColors.primary}
-          />
-        )}
-      </View>
+        </View>
+        <View
+          style={{
+            margin: widthPercentageToDP(2),
+            width: widthPercentageToDP(90),
+            height: heightPercentageToDP(20),
+            borderRadius: 10,
+            overflow: 'hidden', // Add this line
+          }}>
+          <Swiper
+            autoplay={true}
+            autoplayTimeout={6}
+            showsPagination={true}
+            dotColor={'white'}
+            activeDotColor={appColors.primary}
+            nextButton={<Text style={{color: 'white'}}>Next</Text>}
+            prevButton={<Text style={{color: 'white'}}>Prev</Text>}>
+            {images.map((image, index) => (
+              <>
+                <View key={image.id}>{renderImage({item: image})}</View>
+                {index == 4 && (
+                  <Text
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: [{translateX: 0}, {translateY: -80}],
+                      fontSize: 18,
+                      fontWeight: 'bold',
+                      color: 'black',
+                      textAlign: 'center',
+                      // backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                      paddingHorizontal: 10,
+                      paddingVertical: 5,
+                    }}>
+                    Promo Code for{'\n'} Polygon{'\n'} FF0A38
+                  </Text>
+                )}
+              </>
+            ))}
+          </Swiper>
+        </View>
+        <View>
+          <View
+            style={{
+              paddingBottom: scale(20),
+              paddingTop: scale(8),
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <View style={styles.primaryTextContainer}>
+              <Text style={styles.primaryText}>New Arrivals</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('AllProducts')}>
+              <Text>See All</Text>
+            </TouchableOpacity>
+          </View>
+          {!products?.length == 0 ? (
+            <View style={styles.productCardContainer}>
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refeshing}
+                    onRefresh={handleOnRefresh}
+                  />
+                }
+                contentContainerStyle={{paddingTop: 10}}
+                showsHorizontalScrollIndicator={false}
+                initialNumToRender={5}
+                horizontal={true}
+                data={products.slice(0, 4)}
+                keyExtractor={item => item._id}
+                renderItem={({item, index}) => (
+                  <View
+                    key={item._id}
+                    style={{marginLeft: 5, marginBottom: 10, marginRight: 5}}>
+                    <ProductCard
+                      name={item.product_name}
+                      image={item.product_img}
+                      price={item.price}
+                      quantity={item.quantity}
+                      onPress={() => handleProductPress(item)}
+                      // onPressSecondary={() => handleAddToCat(item)}
+                    />
+                  </View>
+                )}
+              />
+              <View style={styles.emptyView}></View>
+            </View>
+          ) : (
+            <ActivityIndicator
+              style={{paddingTop: 130}}
+              size={50}
+              color={appColors.primary}
+            />
+          )}
+        </View>
+      </TouchableOpacity>
     </Container>
   );
 };
